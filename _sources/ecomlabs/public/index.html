@@ -1,0 +1,2654 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcomHelper</title>
+<style>
+:root{--bg:#0f0f13;--bg2:#1a1a22;--bg3:#22222e;--bd:#2e2e3e;--acc:#f5c518;--acc2:#ff6b35;--tx:#e8e8f0;--mt:#8888aa;--ok:#4ade80;--er:#f87171;--wn:#fbbf24;--r:12px;--rs:8px}
+body.light-mode{--bg:#f5f5f0;--bg2:#ffffff;--bg3:#e8e8e2;--bd:#d0d0c8;--tx:#0a0a0a;--mt:#444440;--acc:#d4a800;--acc2:#e55a1a}
+body.light-mode .main-tab{color:#666660}
+.expert-typing span:nth-child(2){animation-delay:.2s}
+.expert-typing span:nth-child(3){animation-delay:.4s}
+body.light-mode .main-tab.active{color:#000;background:var(--acc)}
+body.light-mode header{background:#ffffff;border-color:#d0d0c8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;direction:rtl}
+
+/* HEADER */
+header{background:var(--bg2);border-bottom:1px solid var(--bd);padding:10px 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.logo{font-size:18px;font-weight:700;background:linear-gradient(135deg,var(--acc),var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap}
+.logo-sub{font-size:10px;color:var(--mt)}
+.main-tabs{display:flex;gap:3px;margin:0 auto}
+.main-tab{padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;color:var(--mt);border-radius:var(--rs);transition:all .2s;border:1px solid transparent}
+.main-tab:hover{color:var(--tx);border-color:var(--bd)}
+.main-tab.active{color:#000;background:var(--acc);border-color:var(--acc)}
+.srv{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mt);background:var(--bg3);border:1px solid var(--bd);padding:5px 11px;border-radius:20px;white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--mt);flex-shrink:0;transition:all .3s}
+.dot.ok{background:var(--ok);box-shadow:0 0 6px var(--ok)}
+.dot.er{background:var(--er)}
+.dot.wn{background:var(--wn)}
+#ver-badge{margin-right:6px;font-size:11px;background:rgba(245,197,24,.15);color:var(--acc);border:1px solid rgba(245,197,24,.3);padding:2px 8px;border-radius:20px;font-weight:400;-webkit-text-fill-color:var(--acc)}
+
+/* MAIN PAGES */
+.main-page{display:none}
+
+/* LAYOUT */
+.wrap{max-width:1180px;margin:0 auto;padding:18px}
+.grid{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start}
+@media(max-width:840px){.grid{grid-template-columns:1fr}}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.ct{font-size:11px;font-weight:600;color:var(--mt);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+
+/* INNER TABS */
+.nav-tabs{display:flex;gap:0;margin-bottom:14px;border-bottom:1px solid var(--bd)}
+.nav-tab{padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;color:var(--mt);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
+.nav-tab.active{color:var(--acc);border-bottom-color:var(--acc)}
+
+/* SECTION CHECKBOXES */
+.sec-check-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px}
+.sec-chk{display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);cursor:pointer;transition:all .2s;user-select:none;font-size:11px}
+.sec-chk:hover{border-color:var(--acc)}
+.sec-chk.active{border-color:var(--acc);background:rgba(245,197,24,.08);color:var(--acc)}
+.sec-chk input{display:none}
+.chk-dot{width:11px;height:11px;border-radius:3px;border:1px solid var(--bd);background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px;transition:all .2s}
+.sec-chk.active .chk-dot{background:var(--acc);border-color:var(--acc);color:#000}
+
+/* UPLOAD */
+.upz{border:2px dashed var(--bd);border-radius:var(--r);padding:20px 12px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.upz:hover,.upz.drag{border-color:var(--acc);background:rgba(245,197,24,.03)}
+.upz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upi{font-size:26px;margin-bottom:4px}
+.uph{font-size:12px;color:var(--mt)}
+.uph strong{color:var(--acc)}
+.brm{position:absolute;top:7px;left:7px;background:rgba(0,0,0,.75);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center}
+
+/* BUTTONS */
+.bgen{width:100%;margin-top:10px;padding:11px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#000;font-weight:700;font-size:13px;border:none;border-radius:var(--rs);cursor:pointer;transition:opacity .2s,transform .1s}
+.bgen:hover:not(:disabled){opacity:.88}
+.bgen:active:not(:disabled){transform:scale(.98)}
+.bgen:disabled{opacity:.3;cursor:not-allowed}
+.bsm{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);padding:6px 12px;font-size:11px;cursor:pointer;transition:all .2s}
+.bsm:hover{border-color:var(--acc);color:var(--acc)}
+.bcp{margin-top:7px;padding:6px 12px;background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .2s}
+.bcp:hover{border-color:var(--ok);color:var(--ok)}
+.bsave{width:100%;padding:9px;background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.bsave:hover{border-color:var(--acc);color:var(--acc)}
+.bsave.saved{border-color:var(--ok);color:var(--ok)}
+.bsave:disabled{opacity:.4;cursor:wait}
+.bico{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);color:var(--mt);padding:9px 10px;cursor:pointer;font-size:13px}
+.bico:hover{color:var(--tx)}
+
+/* API KEY */
+.krow{display:flex;gap:6px;margin-bottom:8px}
+.kinp{flex:1;background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);padding:9px 11px;font-size:12px;outline:none;direction:ltr;transition:border-color .2s}
+.kinp:focus{border-color:var(--acc)}
+.kinp.ok{border-color:var(--ok)}
+.kinp.er{border-color:var(--er)}
+.kst{font-size:11px;margin-top:6px;padding:5px 9px;border-radius:var(--rs);display:none}
+.kst.ok{display:block;background:rgba(74,222,128,.08);color:var(--ok);border:1px solid rgba(74,222,128,.2)}
+.kst.er{display:block;background:rgba(248,113,113,.08);color:var(--er);border:1px solid rgba(248,113,113,.2)}
+.kht{font-size:10px;color:var(--mt);margin-top:6px}
+
+/* PROGRESS */
+#pgw{margin-top:10px}
+.prog-bg{background:var(--bg3);border-radius:20px;height:4px;overflow:hidden;margin-bottom:5px}
+.pgb{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:20px;transition:width .4s;width:0%}
+.pgl{font-size:11px;color:var(--mt);text-align:center}
+
+/* SECTIONS OUTPUT */
+.shdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.stit{font-size:14px;font-weight:600}
+.sc{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:8px;overflow:hidden}
+.sh{display:flex;align-items:center;padding:10px 12px;cursor:pointer;gap:9px;user-select:none}
+.sn{min-width:26px;height:26px;border-radius:50%;background:var(--bg3);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--acc);flex-shrink:0}
+.sn.ld{animation:pulse 1s infinite}
+.sn.ok{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.3);color:var(--ok)}
+.sn.er{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.3);color:var(--er)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.si{flex:1;min-width:0}
+.sn2{font-size:12px;font-weight:600}
+.sd{font-size:10px;color:var(--mt);margin-top:1px}
+.sv{color:var(--mt);font-size:10px;transition:transform .2s;flex-shrink:0}
+.sv.op{transform:rotate(180deg)}
+.sb{display:none;padding:0 12px 12px;border-top:1px solid var(--bd)}
+.sb.op{display:block}
+.tabs{display:flex;gap:3px;margin:9px 0 8px}
+.tab{padding:4px 11px;border-radius:var(--rs);font-size:11px;cursor:pointer;border:1px solid var(--bd);color:var(--mt);background:transparent;transition:all .2s}
+.tab.ac{background:var(--acc);color:#000;border-color:var(--acc);font-weight:600}
+.tp{display:none}
+.tp.ac{display:block}
+.tb{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);padding:10px;font-size:12px;line-height:1.75;white-space:pre-wrap;direction:rtl;text-align:right;color:var(--tx);min-height:60px}
+.tb.pr{direction:ltr;text-align:left;font-family:monospace;font-size:11px;color:#7dd3a8}
+.sk{background:var(--bg3);border-radius:4px;animation:pulse 1.5s infinite;height:11px;margin-bottom:6px}
+
+/* FINAL PROMPT */
+.fw{display:none;margin-top:12px}
+.fb{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.fh{padding:11px 13px;background:rgba(245,197,24,.06);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.ft{font-size:12px;font-weight:600;color:var(--acc)}
+.fd{padding:13px;font-family:monospace;font-size:11px;line-height:1.65;color:#7dd3a8;direction:ltr;text-align:left;white-space:pre-wrap;max-height:360px;overflow-y:auto}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:50px 20px;color:var(--mt)}
+.ei{font-size:40px;margin-bottom:10px}
+.et{font-size:13px;line-height:1.8}
+
+/* STITCH */
+.stitch-drop{border:2px dashed var(--bd);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.stitch-drop:hover,.stitch-drop.drag{border-color:var(--acc);background:rgba(245,197,24,.03)}
+.stitch-drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.sort-item{display:flex;align-items:center;gap:9px;padding:7px 9px;background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);margin-bottom:5px;cursor:grab;transition:all .2s;user-select:none}
+.sort-item:active{cursor:grabbing;opacity:.8}
+.sort-item.dragging{opacity:.4;border-style:dashed}
+.sort-item.drag-over{border-color:var(--acc)}
+.sort-thumb{width:44px;height:44px;object-fit:cover;border-radius:4px;border:1px solid var(--bd);flex-shrink:0}
+.sort-info{flex:1;min-width:0}
+.sort-name{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sort-size{font-size:10px;color:var(--mt)}
+.sort-handle{color:var(--mt);font-size:15px;cursor:grab}
+.sort-del{background:none;border:none;color:var(--er);cursor:pointer;font-size:13px;padding:3px}
+.sort-num{min-width:18px;height:18px;border-radius:50%;background:var(--acc);color:#000;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* CREATIVES */
+.cr-card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.cr-card-header{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
+.cr-type{font-size:13px;font-weight:600}
+.cr-badge{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:600}
+.cr-badge.aggressive{background:rgba(248,113,113,.15);color:var(--er)}
+.cr-badge.before-after{background:rgba(74,222,128,.12);color:var(--ok)}
+.cr-badge.testimonial{background:rgba(245,197,24,.12);color:var(--acc)}
+.angle-grid{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px}
+.angle-btn{padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--bd);border-radius:20px;color:var(--mt);background:transparent;transition:all .2s;white-space:nowrap}
+.angle-btn:hover{border-color:var(--acc);color:var(--acc)}
+.angle-btn.active{background:var(--acc);color:#000;border-color:var(--acc)}
+.scene-card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:12px;overflow:hidden}
+.scene-header{padding:12px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bd);background:rgba(245,197,24,.04)}
+.scene-num{min-width:28px;height:28px;border-radius:50%;background:var(--acc);color:#000;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.scene-label{font-size:13px;font-weight:600;flex:1}
+.scene-dur{font-size:11px;color:var(--mt);background:var(--bg3);border:1px solid var(--bd);padding:2px 8px;border-radius:20px}
+.scene-body{padding:14px}
+.scene-section{margin-bottom:10px}
+.scene-section-title{font-size:10px;font-weight:600;color:var(--mt);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.scene-text{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);padding:10px;font-size:12px;line-height:1.7;color:var(--tx);direction:rtl;text-align:right;white-space:pre-wrap}
+.scene-text.en{direction:ltr;text-align:left;font-family:monospace;font-size:11px;color:#7dd3a8}
+.gen-selector{display:flex;gap:6px;margin-bottom:8px}
+.copy-card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:14px;overflow:hidden}
+.copy-card-hdr{padding:11px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);background:rgba(245,197,24,.04)}
+.copy-card-title{font-size:13px;font-weight:600}
+.copy-card-badge{font-size:10px;padding:2px 9px;border-radius:20px;font-weight:600;background:rgba(245,197,24,.15);color:var(--acc)}
+.copy-text{padding:14px;font-size:13px;line-height:1.9;direction:rtl;text-align:right;color:var(--tx);white-space:pre-wrap;background:var(--bg3);margin:10px;border-radius:var(--rs);border:1px solid var(--bd)}
+.copy-footer{padding:9px 14px;display:flex;gap:8px;border-top:1px solid var(--bd)}
+.copy-char-count{font-size:10px;color:var(--mt);display:flex;align-items:center}
+.pr-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.pr-lbl{flex:1;font-size:13px;color:var(--mt);text-align:right;direction:rtl}
+.pr-inp{width:110px;background:rgba(245,197,24,.08);border:1.5px solid var(--acc);border-radius:var(--rs);color:var(--tx);padding:6px 10px;font-size:13px;font-weight:600;text-align:center;outline:none;flex-shrink:0;direction:ltr}
+.pr-inp:focus{border-color:var(--acc2)}
+.pr-unit{font-size:12px;color:var(--mt);min-width:14px}
+.pr-result-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;direction:rtl}
+.pr-val{font-weight:600;color:var(--tx);font-size:13px;font-family:monospace}
+.pr-val.pos{color:var(--ok)}
+.pr-val.neg{color:var(--er)}
+.pr-big{font-size:15px}
+.pr-table{width:100%;border-collapse:collapse;font-size:13px;direction:rtl;text-align:center}
+.pr-table th{color:var(--mt);font-weight:600;padding:5px 8px;border-bottom:1px solid var(--bd)}
+.pr-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.04)}
+.pr-table td:first-child{text-align:right;color:var(--mt)}
+.pr-table .pr-total td{font-weight:700;color:var(--tx);border-top:1px solid var(--bd)}
+.pr-cmp-card{background:var(--bg3);border-radius:var(--r);padding:14px;text-align:center;border:1px solid var(--bd)}
+.pr-cmp-card.winner{border-color:var(--ok);background:rgba(74,222,128,.06)}
+.pr-cmp-card.loser{border-color:var(--er);background:rgba(248,113,113,.06);opacity:.7}
+.pr-cmp-price{font-size:22px;font-weight:700;margin:6px 0}
+.pr-cmp-net{font-size:13px;font-weight:600;margin:4px 0}
+.pr-cmp-margin{font-size:11px;color:var(--mt)}
+.pr-cmp-status{font-size:13px;margin-top:8px;font-weight:700}
+.cr-prompt-box{padding:12px 14px;font-family:monospace;font-size:11px;line-height:1.6;color:#7dd3a8;direction:ltr;text-align:left;white-space:pre-wrap;max-height:220px;overflow-y:auto;background:var(--bg3)}
+.cr-footer{padding:9px 14px;display:flex;gap:8px;border-top:1px solid var(--bd)}
+
+/* TEXTAREA */
+.ctx-area{width:100%;background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);padding:9px 11px;font-size:12px;line-height:1.6;resize:vertical;outline:none;min-height:70px;font-family:inherit;direction:rtl;transition:border-color .2s}
+.ctx-area:focus{border-color:var(--acc)}
+.ctx-area::placeholder{color:var(--mt)}
+
+/* TOAST */
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(12px);background:#152015;color:var(--ok);border:1px solid rgba(74,222,128,.3);padding:8px 18px;border-radius:20px;font-size:12px;opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">EcomHelper <span id="ver-badge">...</span></div>
+    <div class="logo-sub">أداة التسويق الرقمي</div>
+  </div>
+  <div class="main-tabs">
+    <div class="main-tab" id="mtab-settings" onclick="switchMain('settings')">⚙️ Settings</div>
+    <div class="main-tab" id="mtab-pricing" onclick="switchMain('pricing')">💰 Pricing</div>
+    <div class="main-tab" id="mtab-landing" onclick="switchMain('landing')">🏠 Landing Page</div>
+    <div class="main-tab" id="mtab-creatives" onclick="switchMain('creatives')">🎨 Creatives</div>
+    <div class="main-tab" id="mtab-ads" onclick="switchMain('ads')">🎬 Winning Ads</div>
+    <div class="main-tab" id="mtab-copies" onclick="switchMain('copies')">✍️ Ad Copies</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span id="user-badge" style="font-size:11px;color:var(--mt);background:var(--bg3);border:1px solid var(--bd);padding:4px 10px;border-radius:20px"></span>
+    <button id="theme-toggle" onclick="toggleTheme()" style="background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:12px;color:var(--tx);transition:all .2s">🌙 سوداء</button>
+    <button onclick="logout()" style="background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:11px;color:#f87171;transition:all .2s">خروج</button>
+    <div class="srv">
+      <div class="dot" id="sdot"></div>
+      <span id="stxt">جاري الاتصال...</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══ LANDING PAGE ══════════════════════════════════════════ -->
+<div id="page-landing" class="main-page">
+  <div class="wrap">
+    <div class="grid">
+
+      <!-- LEFT PANEL -->
+      <div>
+        <div class="nav-tabs">
+          <div class="nav-tab" id="ptab-gen" onclick="switchInner('gen')">⚡ توليد</div>
+          <div class="nav-tab" id="ptab-stitch" onclick="switchInner('stitch')">🔗 تجميع</div>
+        </div>
+
+        <div id="inner-gen">
+          <div class="card">
+            <div class="ct">📝 تفاصيل المنتج <span style="color:var(--mt);font-weight:400">(اختياري)</span></div>
+            <textarea class="ctx-area" id="product-ctx" placeholder="هنا تكتب معلومات المنتج..."></textarea>
+          </div>
+          <div class="card">
+            <div class="ct">📸 صورة المنتج</div>
+            <div class="upz" id="upz">
+              <input type="file" id="finp" accept="image/*" onchange="handleFile(this)">
+              <div class="upi" id="upi">🖼️</div>
+              <div class="uph" id="uph"><strong>اضغط أو اسحب</strong> صورة المنتج</div>
+            </div>
+            <div id="pvw" style="display:none;margin-top:10px;position:relative">
+              <img id="pvwi" alt="" style="width:100%;border-radius:var(--rs);border:1px solid var(--bd);max-height:200px;object-fit:cover">
+              <button class="brm" onclick="removeImg()">✕</button>
+            </div>
+            <div class="ct" style="margin-top:12px">📋 الأقسام</div>
+            <div class="sec-check-grid" id="sec-checks"></div>
+            <button class="bgen" id="bgen" onclick="startGen()" disabled>⚡ ابدأ التوليد</button>
+            <div id="pgw" style="display:none;margin-top:10px">
+              <div class="prog-bg"><div class="pgb" id="pgb"></div></div>
+              <div class="pgl" id="pgl">...</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="inner-stitch" style="display:none">
+          <div class="card">
+            <div class="ct">📁 ارفع صور الـ sections</div>
+            <div class="stitch-drop" id="drop-zone">
+              <input type="file" id="stitch-input" accept="image/*" multiple onchange="handleStitchFiles(this)">
+              <div style="font-size:26px;margin-bottom:5px">🖼️</div>
+              <div style="font-size:12px;color:var(--mt)"><strong style="color:var(--acc)">اضغط أو اسحب</strong> صور متعددة</div>
+            </div>
+            <div id="stitch-preview-area" style="display:none;margin-top:10px">
+              <div class="ct" style="margin-top:8px">🔢 رتّب (اسحب)</div>
+              <div id="sortable-list"></div>
+              <button class="bgen" onclick="stitchImages()" id="stitch-btn" style="margin-top:8px">🔗 دمج وتحميل</button>
+              <div id="stitch-progress" style="display:none;margin-top:8px">
+                <div class="prog-bg"><div class="pgb" id="stitch-pgb"></div></div>
+                <div class="pgl" id="stitch-pgl">جاري الدمج...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div>
+        <div id="est" class="empty">
+          <div class="ei">🎯</div>
+          <div class="et">ارفع صورة المنتج<br>واضغط ابدأ التوليد</div>
+        </div>
+        <div id="sarea" style="display:none">
+          <div class="shdr">
+            <div class="stit">📋 الأقسام (<span id="dcnt">0</span>)</div>
+            <button class="bsm" onclick="copyFinal()">📄 نسخ الـ Prompt الكامل</button>
+          </div>
+          <div id="slist"></div>
+          <div class="fw" id="fw">
+            <div class="fb">
+              <div class="fh">
+                <div class="ft">🎨 Design Prompt الكامل</div>
+                <button class="bcp" onclick="copyFinal()">📋 نسخ الكل</button>
+              </div>
+              <div class="fd" id="fd"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ CREATIVES PAGE ════════════════════════════════════════ -->
+<div id="page-creatives" class="main-page">
+  <div class="wrap" style="max-width:900px">
+    <div class="grid" style="grid-template-columns:270px 1fr">
+      <div>
+        <div class="card">
+          <div class="ct">📸 صورة المنتج</div>
+          <div class="upz" id="upz-cr">
+            <input type="file" id="finp-cr" accept="image/*" onchange="handleCreativeFile(this)">
+            <div class="upi" id="upi-cr">🖼️</div>
+            <div class="uph" id="uph-cr"><strong>اضغط أو اسحب</strong></div>
+          </div>
+          <div id="pvw-cr" style="display:none;margin-top:10px;position:relative">
+            <img id="pvwi-cr" alt="" style="width:100%;border-radius:var(--rs);border:1px solid var(--bd);max-height:180px;object-fit:cover">
+            <button class="brm" onclick="removeCrFile()">✕</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ct">📝 تفاصيل المنتج</div>
+          <textarea class="ctx-area" id="cr-ctx" placeholder="هنا تكتب معلومات المنتج..."></textarea>
+        </div>
+        <div class="ct" style="margin-top:4px">📋 الأقسام</div>
+        <div class="sec-check-grid" id="cr-sec-checks"></div>
+        <div class="ct" style="margin-top:8px">🎯 الـ Angle</div>
+        <div id="cr-angles"></div>
+        <button class="bgen" id="cr-gen-btn" onclick="generateCreatives()" disabled>🎨 توليد الـ Creatives</button>
+        <div id="cr-prog-wrap" style="display:none;margin-top:10px">
+          <div class="prog-bg"><div class="pgb" id="cr-pgb"></div></div>
+          <div class="pgl" id="cr-pgl">...</div>
+        </div>
+      </div>
+      <div id="cr-area">
+        <div class="empty" style="padding:40px 20px">
+          <div class="ei">🎨</div>
+          <div class="et">ارفع صورة واضغط توليد</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SETTINGS PAGE ════════════════════════════════════════ -->
+<div id="page-settings" class="main-page">
+  <div class="wrap" style="max-width:560px">
+
+    <!-- API Key card -->
+    <div class="card">
+      <div class="ct">🔑 Gemini API Key — حسابك</div>
+      <div style="font-size:11px;color:var(--mt);margin-bottom:10px">الـ key ديالك تتحفظ في حسابك وحده – ما يشوفهاش غيرك</div>
+      <div class="krow">
+        <input class="kinp" type="password" id="kinp" placeholder="AIzaSy..." autocomplete="off">
+        <button class="bico" onclick="toggleVis()">👁</button>
+      </div>
+      <button class="bsave" id="bsave" onclick="saveKey()">
+        <span id="bsave-i">💾</span>
+        <span id="bsave-t">حفظ</span>
+      </button>
+      <div class="kst" id="kst"></div>
+    </div>
+
+    <!-- Server info -->
+    <div class="card">
+      <div class="ct">🌐 Server Info</div>
+      <div style="font-size:12px;color:var(--mt);line-height:2.2">
+        <div>👤 حسابك: <span id="user-email-settings" style="color:var(--acc)">...</span></div>
+        <div>🔢 Version: <span id="ver-settings">...</span></div>
+        <div>📊 Status: <span id="stxt-settings">جاري...</span></div>
+      </div>
+    </div>
+
+    <!-- Admin panel – only visible for admin -->
+    <div class="card" id="admin-panel" style="display:none">
+      <div class="ct" style="color:var(--acc)">👑 إدارة المستخدمين</div>
+
+      <!-- Add user form -->
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <input class="kinp" type="email" id="new-email" placeholder="البريد الإلكتروني" style="flex:1;min-width:160px">
+        <input class="kinp" type="password" id="new-pass" placeholder="كلمة المرور" style="width:130px">
+        <select id="new-role" style="background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);padding:8px 10px;font-size:12px">
+          <option value="user">مستخدم</option>
+          <option value="admin">Admin</option>
+        </select>
+        <button class="bsave" onclick="addUser()" style="width:auto;padding:8px 16px">➕ إضافة</button>
+      </div>
+      <div id="admin-msg" style="font-size:11px;margin-bottom:8px"></div>
+
+      <!-- Users table -->
+      <div id="users-table"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ WINNING ADS PAGE ══════════════════════════════════════════ -->
+<div id="page-ads" class="main-page">
+  <div class="wrap" style="max-width:960px">
+    <div class="grid" style="grid-template-columns:260px 1fr;gap:16px;align-items:start">
+
+      <!-- LEFT -->
+      <div>
+        <div class="card">
+          <div class="ct">📸 صورة المنتج</div>
+          <div class="upz" id="upz-ads">
+            <input type="file" id="finp-ads" accept="image/*" onchange="handleAdsFile(this)">
+            <div class="upi" id="upi-ads">🖼️</div>
+            <div class="uph" id="uph-ads"><strong>اضغط أو اسحب</strong></div>
+          </div>
+          <div id="pvw-ads" style="display:none;margin-top:10px;position:relative">
+            <img id="pvwi-ads" alt="" style="width:100%;border-radius:var(--rs);border:1px solid var(--bd);max-height:160px;object-fit:cover">
+            <button class="brm" onclick="removeAdsFile()">✕</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="ct">📝 تفاصيل المنتج</div>
+          <textarea class="ctx-area" id="ads-ctx" placeholder="هنا تكتب معلومات المنتج..."></textarea>
+        </div>
+
+        <div class="card">
+          <div class="ct">🎬 Video Generator</div>
+          <div style="display:flex;gap:6px;margin-bottom:8px">
+            <button class="angle-btn active" id="gen-veo" onclick="selectGen('veo')" style="flex:1;border-radius:var(--rs)">Veo 3 <span style="font-size:10px;opacity:.7">(8s/scene)</span></button>
+            <button class="angle-btn" id="gen-grok" onclick="selectGen('grok')" style="flex:1;border-radius:var(--rs)">Grok <span style="font-size:10px;opacity:.7">(6s/scene)</span></button>
+          </div>
+          <div style="font-size:10px;color:var(--mt)" id="gen-hint">Veo 3: prompts مفصلة للـ cinematic shots</div>
+        </div>
+        <div class="card">
+          <div class="ct">🎬 Structure</div>
+          <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+            <button class="angle-btn active" id="struct-aggressive" onclick="selectStruct('aggressive')" style="flex:1;border-radius:var(--rs)">🔥 Aggressive<span style="font-size:9px;opacity:.7;display:block">Macro + Pain + Urgent</span></button>
+            <button class="angle-btn" id="struct-clean" onclick="selectStruct('clean')" style="flex:1;border-radius:var(--rs)">✨ Clean<span style="font-size:9px;opacity:.7;display:block">Lifestyle + Solution</span></button>
+            <button class="angle-btn" id="struct-health" onclick="selectStruct('health')" style="flex:1;border-radius:var(--rs)">💪 Health Booster<span style="font-size:9px;opacity:.7;display:block">Fatigue → Strength</span></button>
+            <button class="angle-btn" id="struct-ugc" onclick="selectStruct('ugc')" style="flex:1;border-radius:var(--rs)">🤝 UGC Guarantee<span style="font-size:9px;opacity:.7;display:block">Testimonial + Trust</span></button>
+          </div>
+          <div style="font-size:10px;color:var(--mt)" id="struct-hint">Macro shots ديال المشكل + pain aggressive + CTA urgent</div>
+        </div>
+
+        <div class="card">
+          <div class="ct">🎯 الـ Angle</div>
+          <div id="ads-angles"></div>
+        </div>
+
+        <button class="bgen" id="ads-gen-btn" onclick="generateAds()" disabled>🎬 توليد الـ Video Scripts</button>
+        <div id="ads-prog-wrap" style="display:none;margin-top:10px">
+          <div class="prog-bg"><div class="pgb" id="ads-pgb"></div></div>
+          <div class="pgl" id="ads-pgl">...</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Scenes output -->
+      <div id="ads-area">
+        <div class="empty" style="padding:40px 20px">
+          <div class="ei">🎬</div>
+          <div class="et">ارفع صورة المنتج<br>واضغط توليد</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ AD COPIES PAGE ══════════════════════════════════════════════ -->
+<div id="page-copies" class="main-page">
+  <div class="wrap" style="max-width:900px">
+    <div class="grid" style="grid-template-columns:250px 1fr;gap:16px;align-items:start">
+
+      <!-- LEFT -->
+      <div>
+        <div class="card">
+          <div class="ct">📝 تفاصيل المنتج</div>
+          <textarea class="ctx-area" id="copies-ctx" placeholder="مثال: كريم يعالج HPV، مكونات طبيعية، نتائج من أول استعمال..." style="min-height:90px"></textarea>
+        </div>
+
+        <div class="card">
+          <div class="ct">📱 المنصة</div>
+          <div style="display:flex;gap:6px">
+            <button class="angle-btn active" id="plat-fb" onclick="selectPlatform('fb')" style="flex:1;border-radius:var(--rs)">📘 Facebook</button>
+            <button class="angle-btn" id="plat-tt" onclick="selectPlatform('tt')" style="flex:1;border-radius:var(--rs)">🎵 TikTok</button>
+          </div>
+          <div id="plat-hint" style="font-size:10px;color:var(--mt);margin-top:6px">Facebook: نص طويل عاطفي + emojis كثيرة</div>
+        </div>
+
+        <button class="bgen" id="copies-gen-btn" onclick="generateCopies()">✍️ توليد الـ Ad Copies</button>
+        <div id="copies-prog-wrap" style="display:none;margin-top:10px">
+          <div class="prog-bg"><div class="pgb" id="copies-pgb"></div></div>
+          <div class="pgl" id="copies-pgl">...</div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div id="copies-area">
+        <div class="empty" style="padding:40px 20px">
+          <div class="ei">✍️</div>
+          <div class="et">اكتب تفاصيل المنتج<br>واضغط توليد</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ PRICING PAGE ═══════════════════════════════════════════════════════ -->
+<div id="page-pricing" class="main-page">
+  <div class="wrap" style="max-width:900px">
+
+    <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--acc)">💰 نظام تسعير المنتجات — COD الجزائر</div>
+        <div style="font-size:11px;color:var(--mt);margin-top:3px">أدخل الخانات الزرقاء فقط – النتائج تتحسب تلقائياً</div>
+      </div>
+      <button class="bsm" onclick="resetPricing()">↺ إعادة تعيين</button>
+    </div>
+
+    <div class="grid" style="grid-template-columns:1fr 1fr;gap:14px">
+
+      <!-- INPUTS -->
+      <div>
+        <div class="card">
+          <div class="ct">📥 المعطيات <span style="color:var(--acc)">(خانات الإدخال)</span></div>
+
+          <div class="pr-row">
+            <label class="pr-lbl">سعر شراء المنتج (دج)</label>
+            <input class="pr-inp" type="number" id="pr_buy" oninput="calcPricing()">
+          </div>
+          <div class="pr-row">
+            <label class="pr-lbl">سعر البيع (دج)</label>
+            <input class="pr-inp" type="number" id="pr_sell" oninput="calcPricing()">
+          </div>
+          <div class="pr-row">
+            <label class="pr-lbl">سعر الدولار (دج)</label>
+            <input class="pr-inp" type="number" id="pr_usd" oninput="calcPricing()">
+          </div>
+          <div class="pr-row">
+            <label class="pr-lbl">نسبة التأكيد %</label>
+            <input class="pr-inp" type="number" id="pr_confirm" min="0" max="100" step="1" oninput="calcPricing()">
+            <span class="pr-unit">%</span>
+          </div>
+          <div class="pr-row">
+            <label class="pr-lbl">نسبة التوصيل %</label>
+            <input class="pr-inp" type="number" id="pr_deliver" min="0" max="100" step="1" oninput="calcPricing()">
+            <span class="pr-unit">%</span>
+          </div>
+          <div class="pr-row">
+            <label class="pr-lbl">تكاليف التغليف / طلبية مُسلَّمة (دج)</label>
+            <input class="pr-inp" type="number" id="pr_pack" oninput="calcPricing()">
+          </div>
+          <div class="pr-row">
+            <label class="pr-lbl">تكاليف الشحن / طلبية مُسلَّمة (دج)</label>
+            <input class="pr-inp" type="number" id="pr_ship" oninput="calcPricing()">
+          </div>
+          <div class="pr-row">
+            <label class="pr-lbl">تكاليف تأكيد / طلبية مسلّمة (دج)</label>
+            <input class="pr-inp" type="number" id="pr_conf_cost" oninput="calcPricing()">
+          </div>
+          <div class="pr-row">
+            <label class="pr-lbl">تكاليف إرجاع / طلبية مرجعة (دج)</label>
+            <input class="pr-inp" type="number" id="pr_return_cost" oninput="calcPricing()">
+          </div>
+          <div class="pr-row">
+            <label class="pr-lbl">تكاليف أخرى شهرية (دج)</label>
+            <input class="pr-inp" type="number" id="pr_monthly" oninput="calcPricing()">
+          </div>
+          <div class="pr-row">
+            <label class="pr-lbl">الميزانية اليومية للإعلان ($)</label>
+            <input class="pr-inp" type="number" id="pr_ad_budget" oninput="calcPricing()">
+          </div>
+          <div class="pr-row">
+            <label class="pr-lbl">تكلفة الإعلان / طلبية ($)</label>
+            <input class="pr-inp" type="number" id="pr_cpo" step="0.1" oninput="calcPricing()">
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULTS -->
+      <div>
+        <!-- Per order results -->
+        <div class="card">
+          <div class="ct">📊 النتائج — لكل طلبية</div>
+          <div class="pr-result-row"><span>الفائدة الخام (دج)</span><span id="r_gross" class="pr-val">—</span></div>
+          <div class="pr-result-row"><span>تكلفة الإعلان / طلبية مكتملة ($)</span><span id="r_cpo_usd" class="pr-val">—</span></div>
+          <div class="pr-result-row"><span>تكلفة الإعلان / طلبية مكتملة (دج)</span><span id="r_cpo_dzd" class="pr-val">—</span></div>
+          <div class="pr-result-row"><span>تكاليف الإرجاع / طلبية (دج)</span><span id="r_return_per" class="pr-val">—</span></div>
+          <div class="pr-result-row"><span>مجموع التكاليف / طلبية مكتملة (دج)</span><span id="r_total_cost" class="pr-val">—</span></div>
+          <div class="pr-result-row" style="border-top:1px solid var(--bd);margin-top:6px;padding-top:8px">
+            <span style="font-weight:600">صافي الربح / طلبية مكتملة (دج)</span>
+            <span id="r_net" class="pr-val pr-big">—</span>
+          </div>
+          <div class="pr-result-row">
+            <span style="font-weight:600">هامش الربح %</span>
+            <span id="r_margin" class="pr-val pr-big">—</span>
+          </div>
+          <div class="pr-result-row"><span>نسبة الطلبيات المرجعة %</span><span id="r_return_rate" class="pr-val">—</span></div>
+        </div>
+
+        <!-- Daily/Weekly/Monthly -->
+        <div class="card" style="margin-top:12px">
+          <div class="ct">📈 النتائج — يومي / أسبوعي / شهري</div>
+          <div style="overflow-x:auto">
+            <table class="pr-table">
+              <thead><tr><th></th><th>يومي</th><th>أسبوعي</th><th>شهري</th></tr></thead>
+              <tbody>
+                <tr><td>الميزانية (دج)</td><td id="t_budget_d">—</td><td id="t_budget_w">—</td><td id="t_budget_m">—</td></tr>
+                <tr><td>Leads واردة</td><td id="t_leads_d">—</td><td id="t_leads_w">—</td><td id="t_leads_m">—</td></tr>
+                <tr><td>مرسلة (Shipped)</td><td id="t_ship_d">—</td><td id="t_ship_w">—</td><td id="t_ship_m">—</td></tr>
+                <tr><td>مكتملة (Delivered)</td><td id="t_del_d">—</td><td id="t_del_w">—</td><td id="t_del_m">—</td></tr>
+                <tr><td>مرجعة (Returned)</td><td id="t_ret_d">—</td><td id="t_ret_w">—</td><td id="t_ret_m">—</td></tr>
+                <tr><td>المدخول الإجمالي (دج)</td><td id="t_rev_d">—</td><td id="t_rev_w">—</td><td id="t_rev_m">—</td></tr>
+                <tr><td>الربح الإجمالي (دج)</td><td id="t_profit_d">—</td><td id="t_profit_w">—</td><td id="t_profit_m">—</td></tr>
+                <tr class="pr-total"><td>صافي الربح (دج)</td><td id="t_net_d">—</td><td id="t_net_w">—</td><td id="t_net_m">—</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRICE COMPARISON -->
+    <div class="card" style="margin-top:14px">
+      <div class="ct">🟣 مقارنة 3 أسعار بيع</div>
+      <div style="display:flex;gap:10px;margin-bottom:12px;align-items:center">
+        <div style="display:flex;align-items:center;gap:6px;flex:1">
+          <label style="font-size:11px;color:var(--mt);white-space:nowrap">السعر 1 (دج)</label>
+          <input class="pr-inp" type="number" id="cmp_p1" style="flex:1" oninput="calcPricing()">
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex:1">
+          <label style="font-size:11px;color:var(--mt);white-space:nowrap">السعر 2 (دج)</label>
+          <input class="pr-inp" type="number" id="cmp_p2" style="flex:1" oninput="calcPricing()">
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex:1">
+          <label style="font-size:11px;color:var(--mt);white-space:nowrap">السعر 3 (دج)</label>
+          <input class="pr-inp" type="number" id="cmp_p3" style="flex:1" oninput="calcPricing()">
+        </div>
+      </div>
+      <div class="grid" style="grid-template-columns:1fr 1fr 1fr;gap:10px" id="pr-compare"></div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+<script>
+
+
+const ALL_SECS = [
+  {id:'hero',         name:'Hero',         desc:'العنوان الضخم',      optional:true,  default:false},
+  {id:'problem',      name:'Problem',      desc:'سؤال يلمس الألم',    optional:false, default:true},
+  {id:'solution',     name:'Solution',     desc:'المنتج كحل نهائي',   optional:false, default:true},
+  {id:'before_after', name:'Before/After', desc:'المقارنة البصرية',   optional:false, default:true},
+  {id:'feature',      name:'Feature',      desc:'أهم ميزة',           optional:true,  default:false},
+  {id:'comparison',   name:'Comparison',   desc:'نحن vs المنافسين',   optional:false, default:true},
+  {id:'lifestyle',    name:'Lifestyle',    desc:'المنتج في الحياة',   optional:true,  default:false},
+  {id:'social_proof', name:'Social Proof', desc:'نجوم + شهادات',      optional:false, default:true},
+  {id:'cta',          name:'CTA',          desc:'زر الطلب',           optional:false, default:true}
+];
+
+// Active sections – rebuilt from checkboxes
+let SECS = ALL_SECS.filter(s => s.default);
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// Auth token helper – adds X-Auth-Token to all requests
+function authHeaders() {
+  const headers = { 'x-auth-token': localStorage.getItem('eh_token') || '' };
+  const k = localStorage.getItem('eh_key');
+  if (k) headers['x-api-key'] = k;
+  // Fallback: send credentials directly
+  const em = localStorage.getItem('eh_email');
+  const pw = localStorage.getItem('eh_pass');
+  if (em) headers['x-user-email'] = em;
+  if (pw) headers['x-user-pass'] = pw;
+  return headers;
+}
+function authFetch(url, opts = {}) {
+  opts.headers = Object.assign(opts.headers || {}, authHeaders());
+  // Also inject key into FormData body
+  if (opts.body instanceof FormData) {
+    const k = localStorage.getItem('eh_key');
+    if (k) opts.body.append('api_key', k);
+  }
+  return fetch(url, opts);
+}
+// For FormData requests, inject token into FormData
+function appendToken(fd) {
+  // Token sent via header instead of body for security
+  return fd;
+}
+
+let selFile = null, analysis = null, genData = {}, doneCnt = 0, srvOk = false, userCtx = '';
+
+// ── Version + Health ──────────────────────────────────────────────────────────
+async function ping() {
+  try {
+    const r = await authFetch('/api/health');
+    const d = await r.json();
+    srvOk = !!d.ok;
+    document.getElementById('sdot').className = 'dot ' + (d.ok ? 'ok' : 'wn');
+    document.getElementById('stxt').textContent = d.message || (d.ok ? 'Server شغال ✅' : 'API Key ناقصة ⚠️');
+    if (d.version) setVer(d.version);
+  } catch(e) {
+    srvOk = false;
+    document.getElementById('sdot').className = 'dot er';
+    document.getElementById('stxt').textContent = 'Server غير شغال ❌';
+    setVer('?');
+  }
+  checkReady();
+}
+
+function setVer(v) {
+  document.getElementById('ver-badge').textContent = 'v' + v;
+}
+
+ping();
+setInterval(ping, 20000);
+
+// ── API Key ───────────────────────────────────────────────────────────────────
+function toggleVis() {
+  const i = document.getElementById('kinp');
+  i.type = i.type === 'password' ? 'text' : 'password';
+}
+
+// kinp listener moved to init()
+
+async function saveKey() {
+  const key = document.getElementById('kinp').value.trim();
+  if (key.length < 10) { showKst('er', '❌ Key قصيرة بزاف'); return; }
+  // حفظ الـ key في localStorage – كتتبعث مع كل request
+  localStorage.setItem('eh_key', key);
+
+  const btn = document.getElementById('bsave');
+  btn.disabled = true;
+  document.getElementById('bsave-i').textContent = '⏳';
+  document.getElementById('bsave-t').textContent = 'جاري الحفظ...';
+
+  try {
+    const r = await authFetch('/api/set-key', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ key })
+    });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error || 'فشل');
+
+    document.getElementById('kinp').className = 'kinp ok';
+    btn.className = 'bsave saved';
+    document.getElementById('bsave-i').textContent = '✅';
+    document.getElementById('bsave-t').textContent = 'محفوظة في الـ Server ✅';
+    showKst('ok', '✅ API Key محدثة بنجاح');
+    await ping();
+    setTimeout(() => {
+      btn.className = 'bsave';
+      document.getElementById('bsave-i').textContent = '💾';
+      document.getElementById('bsave-t').textContent = 'حفظ وإرسال للـ Server';
+    }, 3000);
+  } catch(e) {
+    document.getElementById('kinp').className = 'kinp er';
+    showKst('er', '❌ ' + e.message);
+    document.getElementById('bsave-i').textContent = '💾';
+    document.getElementById('bsave-t').textContent = 'حفظ وإرسال للـ Server';
+  }
+  btn.disabled = false;
+  checkReady();
+}
+
+function showKst(type, msg) {
+  const el = document.getElementById('kst');
+  el.className = 'kst ' + type;
+  el.textContent = msg;
+  if (type === 'ok') setTimeout(() => { el.className = 'kst'; }, 5000);
+}
+
+// ── Upload ────────────────────────────────────────────────────────────────────
+function handleFile(inp) {
+  const f = inp.files[0];
+  if (!f) return;
+  if (f.size > 10 * 1024 * 1024) { alert('الصورة كبيرة – ماكس 10MB'); return; }
+  selFile = f;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('pvwi').src = e.target.result;
+    document.getElementById('pvw').style.display = 'block';
+  };
+  reader.readAsDataURL(f);
+  document.getElementById('upi').textContent = '✅';
+  document.getElementById('uph').innerHTML = `<strong>${f.name.substring(0,24)}</strong>`;
+  extractColors(f).then(c => { window._extractedColors = c; });
+  checkReady();
+}
+
+// ── Canvas color extractor ────────────────────────────────────────────────────
+async function extractColors(file) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const W = 80, H = Math.round(img.height * 80 / img.width);
+      const cv = document.createElement('canvas');
+      cv.width = W; cv.height = H;
+      const ctx = cv.getContext('2d');
+      ctx.drawImage(img, 0, 0, W, H);
+      const data = ctx.getImageData(0, 0, W, H).data;
+      const buckets = {};
+      for (let i = 0; i < data.length; i += 4) {
+        const r = Math.round(data[i]   / 24) * 24;
+        const g = Math.round(data[i+1] / 24) * 24;
+        const b = Math.round(data[i+2] / 24) * 24;
+        if (r > 235 && g > 235 && b > 235) continue; // skip near-white
+        if (r < 20  && g < 20  && b < 20)  continue; // skip near-black
+        const k = `${r},${g},${b}`;
+        buckets[k] = (buckets[k] || 0) + 1;
+      }
+      const sorted = Object.entries(buckets).sort((a,b) => b[1]-a[1]);
+      const picked = [];
+      for (const [k] of sorted) {
+        const [r,g,b] = k.split(',').map(Number);
+        const diff = picked.every(([pr,pg,pb]) => Math.abs(r-pr)+Math.abs(g-pg)+Math.abs(b-pb) > 90);
+        if (diff) picked.push([r,g,b]);
+        if (picked.length === 3) break;
+      }
+      // fill with fallbacks if needed
+      while (picked.length < 3) picked.push([26,26,34]);
+      const toHex = (r,g,b) => '#'+[r,g,b].map(v=>Math.min(255,v).toString(16).padStart(2,'0')).join('');
+      const describe = (r,g,b) => {
+        const br = (r*299+g*587+b*114)/1000;
+        if (br > 200) return 'light';
+        if (br < 55)  return 'dark';
+        if (r > g+30 && r > b+30) return 'warm red';
+        if (b > r+30 && b > g+30) return 'cool blue';
+        if (g > r+30 && g > b+30) return 'fresh green';
+        if (r > 180 && g > 150 && b < 80) return 'golden';
+        return 'neutral';
+      };
+      resolve({
+        hex: picked.map(([r,g,b]) => toHex(r,g,b)),
+        desc: picked.map(([r,g,b]) => describe(r,g,b))
+      });
+      URL.revokeObjectURL(img.src);
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+function removeImg() {
+  selFile = null;
+  document.getElementById('pvw').style.display = 'none';
+  document.getElementById('finp').value = '';
+  document.getElementById('upi').textContent = '🖼️';
+  document.getElementById('uph').innerHTML = '<strong>اضغط أو اسحب</strong> صورة المنتج';
+  checkReady();
+}
+
+// upz drag init moved to init()
+
+function checkReady() {
+  document.getElementById('bgen').disabled = !(srvOk && selFile);
+}
+
+// ── Generation ────────────────────────────────────────────────────────────────
+async function startGen() {
+  if (!selFile || !srvOk) return;
+  doneCnt = 0; genData = {}; analysis = null;
+  userCtx = (document.getElementById('product-ctx')?.value || '').trim();
+  document.getElementById('bgen').disabled = true;
+  document.getElementById('pgw').style.display = 'block';
+  document.getElementById('pgl').style.color = '';
+  document.getElementById('est').style.display = 'none';
+  document.getElementById('sarea').style.display = 'block';
+  document.getElementById('fw').style.display = 'none';
+  document.getElementById('dcnt').textContent = '0';
+  buildSkeletons();
+
+  const total = SECS.length + 2;
+  let step = 0;
+
+  try {
+    // Analyze
+    setP(step++, total, '🔍 جاري تحليل المنتج...');
+    const fd0 = new FormData();
+    fd0.append('image', selFile);
+    if (userCtx) fd0.append('user_context', userCtx);
+    // إضافة الألوان المستخرجة من الـ Canvas
+    const ec = window._extractedColors;
+    if (ec && ec.hex) {
+      fd0.append('extracted_colors', ec.hex.join(','));
+      fd0.append('extracted_desc', ec.desc.join(','));
+    }
+    const r0  = await authFetch('/api/analyze', { method:'POST', body:fd0 });
+    const d0  = await r0.json();
+    if (!d0.ok) throw new Error(d0.error || 'فشل التحليل');
+    analysis = d0.analysis;
+
+    // Section by section – كل واحدة بـ prompt خاص
+    for (let i = 0; i < SECS.length; i++) {
+      const sec = SECS[i];
+      setNum(sec.id, 'ld');
+      setP(step++, total, `✍️ ${sec.name}...`);
+
+      const fd = new FormData();
+      fd.append('section', sec.id);
+      fd.append('productContext', JSON.stringify(analysis));
+      if (userCtx) fd.append('user_context', userCtx);
+
+      // retry مرتين إذا rate limit
+      let d = null;
+      for (let attempt = 0; attempt <= 2; attempt++) {
+        const r = await authFetch('/api/generate-section', { method: 'POST', body: fd });
+        d = await r.json();
+        if (d.ok) break;
+        if (d.error === 'RATE_LIMIT' && attempt < 2) {
+          const wait = d.retryAfter || 30;
+          for (let t = wait; t > 0; t--) {
+            setP(step - 1, total, `⏳ Rate limit – retry بعد ${t}s...`);
+            await sleep(1000);
+          }
+        } else break;
+      }
+
+      if (!d?.ok) {
+        const msg = d?.error === 'RATE_LIMIT' ? '⏱️ Rate limit – جرب مجدداً'
+                  : d?.error === 'BAD_KEY'    ? '🔑 API Key غير صحيحة'
+                  : d?.error === 'NO_KEY'     ? '🔑 API Key ناقصة'
+                  : (d?.error || 'خطأ غير معروف');
+        genData[sec.id] = { _error: msg };
+        renderSec(sec, genData[sec.id]);
+        setNum(sec.id, 'er');
+      } else {
+        genData[sec.id] = d.data;
+        renderSec(sec, d.data);
+        doneCnt++;
+        document.getElementById('dcnt').textContent = doneCnt;
+        setNum(sec.id, 'ok');
+      }
+    }
+
+    // Final
+    setP(step++, total, '🎨 تجميع الـ Prompt...');
+    document.getElementById('fd').textContent = buildFinalTxt();
+    document.getElementById('fw').style.display = 'block';
+    setP(total, total, `✅ اكتمل! ${doneCnt}/9 أقسام`);
+    document.getElementById('pgl').style.color = '#4ade80';
+
+  } catch(err) {
+    document.getElementById('pgl').textContent = '❌ ' + err.message;
+    document.getElementById('pgl').style.color = '#f87171';
+  }
+
+  document.getElementById('bgen').disabled = false;
+  document.getElementById('bgen').textContent = '🔄 إعادة التوليد';
+  checkReady();
+}
+
+function setP(s, t, lbl) {
+  document.getElementById('pgb').style.width = Math.round(s / t * 100) + '%';
+  document.getElementById('pgl').textContent = lbl;
+}
+
+function setNum(id, st) {
+  const el = document.getElementById('n-' + id);
+  if (!el) return;
+  el.className = 'sn ' + st;
+  if (st === 'ok') el.textContent = '✓';
+  if (st === 'er') el.textContent = '✗';
+}
+
+// ── Skeletons ─────────────────────────────────────────────────────────────────
+function buildSkeletons() {
+  document.getElementById('slist').innerHTML = SECS.map((s, i) => `
+  <div class="sc" id="c-${s.id}">
+    <div class="sh" onclick="togSec('${s.id}')">
+      <div class="sn" id="n-${s.id}">${i+1}</div>
+      <div class="si"><div class="sn2">${s.name}</div><div class="sd">${s.desc}</div></div>
+      <div class="sv" id="v-${s.id}">▼</div>
+    </div>
+    <div class="sb" id="b-${s.id}">
+      <div style="padding-top:12px">
+        <div class="sk" style="width:80%"></div>
+        <div class="sk" style="width:60%"></div>
+        <div class="sk" style="width:92%"></div>
+      </div>
+    </div>
+  </div>`).join('');
+}
+
+// ── Section metadata: order + transitions ─────────────────────────────────────
+const SEC_META = {
+  hero:         { num:1, label:'HERO',         endsColor:'dynamic gradient fading to dark'   },
+  problem:      { num:2, label:'PROBLEM',       endsColor:'dark muted tones fading to black'  },
+  solution:     { num:3, label:'SOLUTION',      endsColor:'bright burst fading to light'      },
+  before_after: { num:4, label:'BEFORE/AFTER',  endsColor:'split: dark left, bright right, blending center' },
+  feature:      { num:5, label:'KEY FEATURE',   endsColor:'dramatic dark with glowing accent' },
+  comparison:   { num:6, label:'COMPARISON',    endsColor:'neutral mid-tone background'       },
+  lifestyle:    { num:7, label:'LIFESTYLE',     endsColor:'warm lifestyle tones fading soft'  },
+  social_proof: { num:8, label:'SOCIAL PROOF',  endsColor:'warm gold tones fading to neutral' },
+  cta:          { num:9, label:'CTA FOOTER',    endsColor:'high-contrast dark footer'         }
+};
+
+const SEC_ORDER = ['hero','problem','solution','before_after','feature','comparison','lifestyle','social_proof','cta'];
+
+function getPrevEndColor(secId) {
+  const idx = SEC_ORDER.indexOf(secId);
+  if (idx <= 0) return null;
+  const prevId = SEC_ORDER[idx - 1];
+  // Check if previous section was generated
+  const prevData = genData[prevId];
+  if (!prevData || prevData._error) return SEC_META[prevId].endsColor;
+  return SEC_META[prevId].endsColor;
+}
+
+// ── Build full Nano Banana prompt for ONE section ─────────────────────────────
+function buildSectionPrompt(secId, data) {
+  const a = analysis || {};
+  const name = a.product_name || 'المنتج';
+  const colors = a.color_palette || '#FF6B35,#F5C518,#1A1A22';
+  const vibe = a.product_vibe || 'premium';
+  const meta = SEC_META[secId];
+  const secNum = meta.num;
+  const totalSecs = 9;
+  const prevEndColor = getPrevEndColor(secId);
+
+  // Transition instruction from previous section
+  const transitionLine = prevEndColor
+    ? `CONTINUE from sec ${secNum-1} ended:(${prevEndColor}). Zero seam.`
+    : `First section. Dynamic bg.`;
+  const endNote = `End with:${meta.endsColor}.`;
+
+  const header = `1080x1920px 9:16 PNG. No device frame, bleed edge-to-edge.
+Product: ${name} | Vibe: ${vibe} | Sec ${secNum}/${totalSecs}
+Arabic RTL min 20px bold. No prices. No English labels.
+${transitionLine} ${endNote}`;
+
+  const sectionContent = {
+    hero: `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 1 OF 9 — HERO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${data.design_description||'Product centered and prominent, dynamic particle background.'}
+Small Yellow badge: "${data.badge||''}"
+HUGE WHITE BOLD headline: "${data.headline||''}"
+Large subheadline: "${data.subheadline||''}"`,
+
+    problem: `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 2 OF 9 — PROBLEM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${data.design_description||'Dark muted area, frustrated person, problem icons.'}
+Large Bold Red question: "${data.question||''}"
+Medium body: "${data.body||''}"`,
+
+    solution: `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 3 OF 9 — SOLUTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${data.design_description||'Bright light burst, product triumphant with glowing effects.'}
+HUGE BOLD headline: "${data.headline||''}"
+Large body: "${data.body||''}"`,
+
+    before_after: `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 4 OF 9 — BEFORE / AFTER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Left side (dark/dull): ${data.design_description_before||'problem visual'}
+Right side (bright/vibrant): ${data.design_description_after||'happy outcome visual'}
+LARGE BOLD: "${data.headline||''}"
+Medium Red: "❌ قبل: ${data.before||''}"
+Medium Green: "✅ من بعد: ${data.after||''}"`,
+
+    feature: `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 5 OF 9 — KEY FEATURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${data.feature_visual||'Extreme dramatic close-up of the product best feature.'}
+${data.design_description||'Glowing effects, cinematic lighting.'}
+LARGE BOLD: "${data.headline||''}"
+Large: "${data.body||''}"`,
+
+    comparison: `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 6 OF 9 — COMPARISON
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${data.design_description||'2-column split: left glowing our product, right dull gray competitor.'}
+LARGE BOLD: "${data.headline||''}"
+Green checkmarks: "${(data.our_features||[]).map(f=>'✔️ '+f).join(' | ')}"
+Red crosses: "${(data.competitor_flaws||[]).map(f=>'❌ '+f).join(' | ')}"`,
+
+    lifestyle: `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 7 OF 9 — LIFESTYLE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${data.scene_description||'Natural warm lifestyle scene, product in daily use.'}
+LARGE BOLD: "${data.headline||''}"
+Large: "${data.body||''}"`,
+
+    social_proof: `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 8 OF 9 — SOCIAL PROOF
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${data.design_description||'5 large golden glowing stars, customer avatar icons.'}
+LARGE BOLD: "شنو قالو الكليان ديالنا"
+Review 1: "${data.review_1||''}" — ${data.reviewer_1||''}
+Review 2: "${data.review_2||''}" — ${data.reviewer_2||''}`,
+
+    cta: `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 9 OF 9 — CTA FOOTER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${data.design_description||'High contrast footer, product prominent next to CTA button.'}
+Large White Bold: "⚠️ ${data.urgency||''}"
+HUGE BLACK TEXT on YELLOW Button: "${data.button_text||''}"
+Small trust text: "${data.subtext||''}"`,
+  };
+
+  return header + (sectionContent[secId] || '');
+}
+
+// ── Render section ────────────────────────────────────────────────────────────
+function renderSec(sec, data) {
+  const body = document.getElementById('b-' + sec.id);
+  if (data._error) {
+    body.innerHTML = `<div style="padding:12px 0;color:var(--er);font-size:12px">${data._error}</div>`;
+    return;
+  }
+
+  // Darija copy text
+  let ct = '';
+  switch(sec.id) {
+    case 'hero':        ct = `🏷️ ${data.badge||''}\n📢 ${data.headline||''}\n💡 ${data.subheadline||''}`; break;
+    case 'problem':     ct = `❓ ${data.question||''}\n📝 ${data.body||''}`; break;
+    case 'solution':    ct = `🌟 ${data.headline||''}\n💪 ${data.body||''}`; break;
+    case 'before_after':ct = `🔄 ${data.headline||''}\n❌ قبل: ${data.before||''}\n✅ من بعد: ${data.after||''}`; break;
+    case 'feature':     ct = `⭐ ${data.headline||''}\n📌 ${data.body||''}`; break;
+    case 'comparison':  ct = `🏆 ${data.headline||''}\n\nنحن:\n${(data.our_features||[]).map(f=>'✔️ '+f).join('\n')}\n\nالمنافس:\n${(data.competitor_flaws||[]).map(f=>'❌ '+f).join('\n')}`; break;
+    case 'lifestyle':   ct = `🌅 ${data.headline||''}\n💬 ${data.body||''}`; break;
+    case 'social_proof':ct = `⭐⭐⭐⭐⭐\n"${data.review_1||''}" – ${data.reviewer_1||''}\n"${data.review_2||''}" – ${data.reviewer_2||''}`; break;
+    case 'cta':         ct = `⚠️ ${data.urgency||''}\n🛒 ${data.button_text||''}\n🚚 ${data.subtext||''}`; break;
+  }
+
+  // Store data for prompt generation
+  body.dataset.secId = sec.id;
+  body.dataset.secData = JSON.stringify(data);
+
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  body.innerHTML = `
+    <div class="tabs">
+      <button class="tab ac" onclick="swTab(this,'cp-${sec.id}')">✏️ نص الدارجة</button>
+      <button class="tab"    onclick="swTab(this,'nb-${sec.id}')">🎨 Nano Banana Prompt</button>
+    </div>
+    <div class="tp ac" id="cp-${sec.id}">
+      <div class="tb">${esc(ct)}</div>
+      <button class="bcp" onclick="copySecText('${sec.id}','copy')">📋 نسخ النص</button>
+    </div>
+    <div class="tp" id="nb-${sec.id}">
+      <div class="nb-prompt-box" id="nbp-${sec.id}"></div>
+      <button class="bcp bnb" onclick="copySecText('${sec.id}','prompt')">🚀 نسخ الـ Prompt</button>
+    </div>`;
+
+  // Render prompt preview lazily when tab opened
+  body.classList.add('op');
+  document.getElementById('v-' + sec.id).classList.add('op');
+}
+
+function copySecText(secId, mode) {
+  const body = document.getElementById('b-' + secId);
+  const data = JSON.parse(body.dataset.secData || '{}');
+
+  if (mode === 'prompt') {
+    const prompt = buildSectionPrompt(secId, data);
+    // Show preview
+    const box = document.getElementById('nbp-' + secId);
+    if (box && !box.textContent) box.textContent = prompt;
+    doCopy(prompt);
+  } else {
+    // Copy darija text
+    const tb = body.querySelector('.tb');
+    doCopy(tb ? tb.innerText : '');
+  }
+}
+
+function togSec(id) {
+  document.getElementById('b-'+id).classList.toggle('op');
+  document.getElementById('v-'+id).classList.toggle('op');
+}
+
+function swTab(btn, pid) {
+  const p = btn.closest('.sb');
+  p.querySelectorAll('.tab').forEach(t => t.classList.remove('ac'));
+  p.querySelectorAll('.tp').forEach(t => t.classList.remove('ac'));
+  btn.classList.add('ac');
+  document.getElementById(pid)?.classList.add('ac');
+
+  // إذا فتح tab ديال Nano Banana، نبني الـ prompt تلقائياً
+  if (pid.startsWith('nb-')) {
+    const secId = pid.replace('nb-', '');
+    const box = document.getElementById('nbp-' + secId);
+    if (box && !box.textContent.trim()) {
+      const body = document.getElementById('b-' + secId);
+      const data = JSON.parse(body?.dataset?.secData || '{}');
+      box.textContent = buildSectionPrompt(secId, data);
+    }
+  }
+}
+
+// ── Final Prompt ──────────────────────────────────────────────────────────────
+function buildFinalTxt() {
+  const a  = analysis || {};
+  const gd = genData;
+  const name  = a.product_name  || 'المنتج';
+  const vibe  = a.product_vibe  || 'premium';
+
+  // فقط الـ sections المولودة
+  const activeSecs = SECS.filter(s => gd[s.id] && !gd[s.id]._error);
+
+  // نبني كل section كـ block
+  const blocks = activeSecs.map((sec, i) => {
+    const d  = gd[sec.id];
+    const num = i + 1;
+    const total = activeSecs.length;
+    let block = `\n━━━ SECTION ${num}/${total} – ${sec.name.toUpperCase()} ━━━`;
+
+    switch(sec.id) {
+      case 'hero':
+        block += `\n${d.design_description||''}`;
+        block += `\nSmall badge: "${d.badge||''}"`;
+        block += `\nHUGE BOLD headline: "${d.headline||''}"`;
+        block += `\nLarge subheadline: "${d.subheadline||''}"`;
+        break;
+      case 'problem':
+        block += `\n${d.design_description||''}`;
+        block += `\nBold Red question: "${d.question||''}"`;
+        block += `\nMedium body: "${d.body||''}"`;
+        break;
+      case 'solution':
+        block += `\n${d.design_description||''}`;
+        block += `\nHUGE BOLD headline: "${d.headline||''}"`;
+        block += `\nLarge body: "${d.body||''}"`;
+        break;
+      case 'before_after':
+        block += `\nLeft side (dark/problem): ${d.design_description_before||''}`;
+        block += `\nRight side (bright/happy): ${d.design_description_after||''}`;
+        block += `\nLARGE BOLD title: "${d.headline||''}"`;
+        block += `\nRed text: "❌ قبل: ${d.before||''}"`;
+        block += `\nGreen text: "✅ من بعد: ${d.after||''}"`;
+        break;
+      case 'feature':
+        block += `\n${d.feature_visual||''} ${d.design_description||''}`;
+        block += `\nLARGE BOLD: "${d.headline||''}"`;
+        block += `\nLarge: "${d.body||''}"`;
+        break;
+      case 'comparison':
+        block += `\n${d.design_description||''}`;
+        block += `\nLARGE BOLD: "${d.headline||''}"`;
+        block += `\nGreen: "${(d.our_features||[]).map(f=>'✔️ '+f).join('  ')}"`;
+        block += `\nRed: "${(d.competitor_flaws||[]).map(f=>'❌ '+f).join('  ')}"`;
+        break;
+      case 'lifestyle':
+        block += `\n${d.scene_description||''}`;
+        block += `\nLARGE BOLD: "${d.headline||''}"`;
+        block += `\nLarge: "${d.body||''}"`;
+        break;
+      case 'social_proof':
+        block += `\n${d.design_description||''}`;
+        block += `\nBOLD title: "شنو قالو زبائننا"`;
+        block += `\n⭐⭐⭐⭐⭐  "${d.review_1||''}" – ${d.reviewer_1||''}`;
+        block += `\n⭐⭐⭐⭐⭐  "${d.review_2||''}" – ${d.reviewer_2||''}`;
+        break;
+      case 'cta':
+        block += `\n${d.design_description||''}`;
+        block += `\nWhite bold urgency: "⚠️ ${d.urgency||''}"`;
+        block += `\nHUGE BLACK on YELLOW button: "${d.button_text||''}"`;
+        block += `\nSmall trust text: "${d.subtext||''}"`;
+        break;
+    }
+    return block;
+  }).join('\n');
+
+  const extraCtx = userCtx ? `\nExtra product details: ${userCtx}` : '';
+  return `You are a world-class mobile landing page designer.
+Generate ONE tall vertical image: 1080 x ${activeSecs.length * 1920}px, 9:16 ratio per section, total ${activeSecs.length} sections stacked seamlessly.
+Format: PNG. No device frame. Content bleeds edge to edge. No borders between sections.
+
+Product: ${name} | Aesthetic vibe: ${vibe}${extraCtx}
+All text in Arabic (RTL), min 20px, ultra bold. No prices. No English text visible.
+One continuous smooth gradient flow from top to bottom – NO hard lines between sections.
+${blocks}
+
+GLOBAL RULES:
+• Each section fills exactly 1080x1920px
+• Seamless color transition between every section
+• Arabic text only – massive bold fonts, right-to-left
+• No watermarks, no borders, no device frames`;
+}
+
+async function copyFinal() {
+  const t = document.getElementById('fd').textContent;
+  if (!t.trim()) { showToast('⚠️ ولّد أولاً!'); return; }
+  await doCopy(t);
+}
+
+async function doCopy(text) {
+  try { await navigator.clipboard.writeText(text); }
+  catch {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+  showToast('✅ تم النسخ!');
+}
+
+function copyCreativePrompt(elemId) {
+  const el = document.getElementById(elemId);
+  if (el) doCopy(el.innerText);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 2400);
+}
+
+// ── Page navigation ───────────────────────────────────────────────────────────
+function switchInner(page) {
+  ['gen','stitch'].forEach(id => {
+    const el = document.getElementById('inner-' + id);
+    if (el) el.style.display = (id === page) ? 'block' : 'none';
+    const tb = document.getElementById('ptab-' + id);
+    if (tb) tb.classList.toggle('active', id === page);
+  });
+}
+function switchPage(page) { switchInner(page); }
+
+// ── Main tab switching ────────────────────────────────────────────────────────
+function switchMain(tab) {
+  ['landing','creatives','settings','ads','copies','pricing'].forEach(id => {
+    const el = document.getElementById('page-' + id);
+    if (el) el.style.display = (id === tab) ? 'block' : 'none';
+    const tb = document.getElementById('mtab-' + id);
+    if (tb) tb.classList.toggle('active', id === tab);
+  });
+  if (tab === 'finder') {
+    finderLoadSaved();
+  }
+  if (tab === 'settings') {
+    const vb = document.getElementById('ver-badge');
+    const st = document.getElementById('stxt');
+    const vs = document.getElementById('ver-settings');
+    const ss = document.getElementById('stxt-settings');
+    if (vb && vs) vs.textContent = vb.textContent;
+    if (st && ss) ss.textContent = st.textContent;
+    // Show email
+    const emailEl = document.getElementById('user-email-settings');
+    if (emailEl) emailEl.textContent = localStorage.getItem('eh_email') || '';
+    // Show admin panel if admin
+    const adminPanel = document.getElementById('admin-panel');
+    if (adminPanel) {
+      const isAdmin = localStorage.getItem('eh_role') === 'admin';
+      adminPanel.style.display = isAdmin ? 'block' : 'none';
+      if (isAdmin) loadAdminPanel();
+    }
+  }
+}
+
+// ── Creatives ─────────────────────────────────────────────────────────────────
+let crFile = null, crAnalysis = null;
+
+function handleCreativeFile(inp) {
+  const f = inp.files[0];
+  if (!f) return;
+  crFile = f;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('pvwi-cr').src = e.target.result;
+    document.getElementById('pvw-cr').style.display = 'block';
+  };
+  reader.readAsDataURL(f);
+  document.getElementById('upi-cr').textContent = '✅';
+  document.getElementById('uph-cr').innerHTML = `<strong>${f.name.substring(0,20)}</strong>`;
+  document.getElementById('cr-gen-btn').disabled = false;
+  extractColors(f).then(c => { window._crColors = c; });
+}
+
+function removeCrFile() {
+  crFile = null; crAnalysis = null;
+  document.getElementById('pvw-cr').style.display = 'none';
+  document.getElementById('finp-cr').value = '';
+  document.getElementById('upi-cr').textContent = '🖼️';
+  document.getElementById('uph-cr').innerHTML = '<strong>اضغط أو اسحب</strong>';
+  document.getElementById('cr-gen-btn').disabled = true;
+  document.getElementById('cr-area').innerHTML = '<div class="empty" style="padding:40px 20px"><div class="ei">🎨</div><div class="et">ارفع صورة المنتج</div></div>';
+}
+
+async function generateCreatives() {
+  if (!crFile || !srvOk) return;
+  const btn = document.getElementById('cr-gen-btn');
+  const prog = document.getElementById('cr-prog-wrap');
+  const pgb = document.getElementById('cr-pgb');
+  const pgl = document.getElementById('cr-pgl');
+  btn.disabled = true;
+  prog.style.display = 'block';
+  pgl.style.color = '';
+
+  try {
+    // Analyze product first
+    pgl.textContent = '🔍 جاري تحليل المنتج...';
+    pgb.style.width = '15%';
+    const fd0 = new FormData();
+    fd0.append('image', crFile);
+    const crCtx = document.getElementById('cr-ctx').value.trim();
+    if (crCtx) fd0.append('user_context', crCtx);
+    const ec = window._crColors;
+    if (ec?.hex) { fd0.append('extracted_colors', ec.hex.join(',')); fd0.append('extracted_desc', ec.desc.join(',')); }
+    const r0 = await authFetch('/api/analyze', { method:'POST', body:fd0 });
+    const d0 = await r0.json();
+    if (!d0.ok) throw new Error(d0.error);
+    crAnalysis = d0.analysis;
+    pgb.style.width = '30%';
+
+    // Generate creative prompts via Gemini
+    pgl.textContent = '✍️ جاري توليد الـ Creatives...';
+    const fd1 = new FormData();
+    fd1.append('productContext', JSON.stringify(crAnalysis));
+    if (crCtx) fd1.append('user_context', crCtx);
+    const r1 = await authFetch('/api/generate-creatives', { method:'POST', body:fd1 });
+    const d1 = await r1.json();
+    if (!d1.ok) throw new Error(d1.error);
+    pgb.style.width = '100%';
+    pgl.textContent = '✅ جاهزين للنسخ!';
+    pgl.style.color = '#4ade80';
+
+    renderCreatives(d1.creatives, crAnalysis);
+  } catch(err) {
+    pgl.textContent = '❌ ' + err.message;
+    pgl.style.color = '#f87171';
+  }
+  btn.disabled = false;
+}
+
+// ── Creative sections config ──────────────────────────────────────────────────
+const CR_SECS = [
+  { id:'aggressive',   name:'Aggressive',    emoji:'🔥', badge:'aggressive',  default:true },
+  { id:'before_after', name:'Before & After', emoji:'B&A', badge:'before-after',default:true },
+  { id:'testimonial',  name:'Testimonial',    emoji:'⭐', badge:'testimonial', default:true },
+  { id:'fb_comments',    name:'Facebook Comments', emoji:'💬', badge:'testimonial', default:false },
+  { id:'product_benefits', name:'Product Benefits',  emoji:'✅', badge:'before-after', default:false }
+];
+const _crPrompts = {};
+
+// ── Angles ────────────────────────────────────────────────────────────────────
+const CR_ANGLES = [
+  { id:'pain',        label:'😣 Pain',          desc:'Show the deep emotional pain and frustration of having the problem. Make the viewer feel understood.' },
+  { id:'fear',        label:'😰 Fear',           desc:'Trigger fear of consequences if the problem is not solved. What happens if they keep ignoring it?' },
+  { id:'curiosity',   label:'🤔 Curiosity',      desc:'Create curiosity and intrigue. Hint at a surprising or unexpected solution. Make them want to know more.' },
+  { id:'fast_result', label:'⚡ Fast Result',    desc:'Promise and visually show rapid transformation. Before/after speed. Results in days not months.' },
+  { id:'luxury',      label:'💎 Luxury',         desc:'Position the product as premium, exclusive, sophisticated. Elegant visuals, aspirational lifestyle.' },
+  { id:'social',      label:'👥 Social Proof',   desc:'Heavy emphasis on community, testimonials, numbers. Everyone is using this. You are missing out.' },
+  { id:'urgency',     label:'⏰ Urgency',        desc:'Limited stock, limited time. Create FOMO. Act now or miss this opportunity forever.' },
+  { id:'natural',     label:'🌿 Natural/Safe',   desc:'Emphasize organic, chemical-free, gentle, safe for sensitive skin. Pure nature heals.' }
+];
+
+let activeAngle = 'pain'; // default
+
+function buildAngles() {
+  const el = document.getElementById('cr-angles');
+  if (!el) return;
+  el.innerHTML = '<div class="angle-grid">' +
+    CR_ANGLES.map(a =>
+      `<button class="angle-btn ${a.id === activeAngle ? 'active' : ''}" id="abtn-${a.id}" onclick="selectAngle('${a.id}')">${a.label}</button>`
+    ).join('') +
+    '</div>' +
+    '<div id="angle-desc" style="font-size:10px;color:var(--mt);line-height:1.5;margin-top:2px">' +
+    (CR_ANGLES.find(a => a.id === activeAngle)?.desc || '') +
+    '</div>';
+}
+
+function selectAngle(id) {
+  activeAngle = id;
+  document.querySelectorAll('.angle-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('abtn-' + id);
+  if (btn) btn.classList.add('active');
+  const desc = document.getElementById('angle-desc');
+  if (desc) desc.textContent = CR_ANGLES.find(a => a.id === id)?.desc || '';
+}
+
+function getAngleInstruction() {
+  const a = CR_ANGLES.find(x => x.id === activeAngle);
+  return a ? 'ANGLE: ' + a.label.replace(/[^\w\s/]/g,'').trim() + ' — ' + a.desc : '';
+}
+
+function buildCrSecChecks() {
+  const grid = document.getElementById('cr-sec-checks');
+  if (!grid) return;
+  grid.innerHTML = CR_SECS.map(s => {
+    const cls = s.default ? 'sec-chk active' : 'sec-chk';
+    const chk = s.default ? 'checked' : '';
+    const dot = s.default ? '✓' : '';
+    return `<label class="${cls}" id="crchklbl-${s.id}" onclick="toggleCrSec('${s.id}')"><input type="checkbox" ${chk} id="crchk-${s.id}"><div class="chk-dot">${dot}</div><span>${s.emoji} ${s.name}</span></label>`;
+  }).join('');
+}
+
+function toggleCrSec(id) {
+  const inp = document.getElementById('crchk-'+id);
+  const lbl = document.getElementById('crchklbl-'+id);
+  const dot = lbl.querySelector('.chk-dot');
+  inp.checked = !inp.checked;
+  lbl.classList.toggle('active', inp.checked);
+  dot.textContent = inp.checked ? '✓' : '';
+}
+
+function buildPromptForSec(secId, d, name, userCtx) {
+  const ctx = userCtx ? ('\n\nPRODUCT DETAILS – FOCUS ON THESE DETAILS IN EVERY VISUAL AND TEXT: ' + userCtx) : '';
+  const angle = getAngleInstruction();
+  const angleBlock = angle ? ('\n\n' + angle) : '';
+  const trust = '\n\nTRUST ELEMENTS (always include in CTA areas): توصيل لباب المنزل | الدفع عند الاستلام';
+  const base = '960x960px square PNG. No device frame, bleed edge-to-edge. Arabic RTL, ultra bold fonts. No prices.' + ctx + angleBlock + trust;
+
+  if (secId === 'aggressive') {
+    return base + '\n\nStyle: AGGRESSIVE emotional ad. Dark cinematic atmosphere.' +
+      '\n\nTOP HALF – dark dramatic:' +
+      '\n• Background: ' + (d.bg_description||'dark dramatic') +
+      '\n• Show the EXACT PROBLEM from product details visually (not just a sad person – show the actual issue: skin condition, pain, symptoms)' +
+      '\n• HUGE RED BOLD: "' + (d.problem_headline||'') + '"' +
+      '\n• Medium text: "' + (d.problem_body||'') + '"' +
+      '\n\nBOTTOM HALF – bright solution:' +
+      '\n• Product image prominent with glow' +
+      '\n• HUGE WHITE BOLD: "' + (d.solution_headline||'') + '"' +
+      '\n• Yellow CTA button: "' + (d.cta||'') + '"' +
+      '\n\nCinematic contrast. No borders.';
+  }
+
+  if (secId === 'before_after') {
+    return base + '\n\nStyle: BEFORE & AFTER split creative.' +
+      '\n\nLEFT SIDE (before – dark/dull):' +
+      '\n• Desaturated tones' +
+      '\n• Visual showing the specific problem from product details' +
+      '\n• RED text: "❌ قبل"' +
+      '\n• Bold: "' + (d.before||'') + '"' +
+      '\n\nRIGHT SIDE (after – bright/vibrant):' +
+      '\n• Full color, positive, glowing' +
+      '\n• Happy result visual' +
+      '\n• GREEN text: "✅ بعد"' +
+      '\n• Bold: "' + (d.after||'') + '"' +
+      '\n\nCENTER divider + product name: "' + name + '"' +
+      '\nBOTTOM: product image + CTA: "' + (d.cta||'') + '"' +
+      '\nSmooth color transition between sides.';
+  }
+
+  if (secId === 'testimonial') {
+    return base + '\n\nStyle: SOCIAL PROOF testimonial. Warm trustworthy.' +
+      '\n\nTOP: ⭐⭐⭐⭐⭐ large golden stars centered' +
+      '\nCENTER: Realistic happy Algerian customer avatar. Name: "' + (d.reviewer||'') + '"' +
+      '\nLARGE QUOTE: "' + (d.review||'') + '"' +
+      '\nLOWER: Product image with soft glow' +
+      '\nBOTTOM: Product name + trust badges: ✅ توصيل لباب المنزل | ✅ الدفع عند الاستلام' +
+      '\nCTA button: "' + (d.cta||'') + '"' +
+      '\nWarm golden tones. Trust-building aesthetic.';
+  }
+  if (secId === 'fb_comments') {
+    const comments = d.comments || [];
+    const commentBlocks = comments.length ? comments.map((c,i) => {
+      const avatarSeed = 10 + (i * 13);
+      return '• Avatar: circular photo from https://i.pravatar.cc/40?img=' + avatarSeed + ' | Name: USE NAME FROM COMMENT DATA | Time: "' + (2+i) + 'h" | Comment: "' + c + '" | 😮 emoji below';
+    }).join('\n') : '• 3 random positive Arabic comments with unique invented Algerian names';
+    return base + '\n\nStyle: FACEBOOK COMMENTS SCREENSHOT. Light gray background like real Facebook/Meta UI.' +
+      '\n\nLayout: 960x960px realistic Facebook comments section screenshot.' +
+      '\n• 3-4 comment bubbles stacked vertically' +
+      '\n• Each comment: circular profile photo (realistic person), username in bold black, time "Xh", comment text in black, 😮 or ❤️ reaction below, "J\'aime · Répondre" in gray' +
+      '\n• Comments in Algerian Darija praising results' +
+      '\n• IMPORTANT: Each commenter must have a UNIQUE invented Algerian name – NEVER repeat names, NEVER use "Hiba", generate fresh creative names each time (mix of first+last name abbreviation)' +
+      '\n• Light gray background #f0f2f5, clean realistic Facebook UI' +
+      '\n\nCOMMENTS CONTENT:\n' + commentBlocks +
+      '\n\nBottom of image: product name "' + name + '" with small glow and trust text: توصيل | الدفع عند الاستلام';
+  }
+
+  if (secId === 'product_benefits') {
+    const benefits = d.benefits || [];
+    const benefitLines = benefits.length 
+      ? benefits.map((b,i) => '• Icon ' + (i+1) + ': ' + b).join('\n')
+      : '• 4 key product benefits as icon + short Arabic text';
+    const problemVisual = d.problem_visual || 'the main problem this product solves';
+    const resultVisual = d.result_visual || 'healthy result after using the product';
+    return base + '\n\nStyle: PRODUCT BENEFITS AD. Clean scientific premium health product aesthetic.' +
+      '\n\nLayout: 960x960px.' +
+      '\n\nRIGHT SIDE (40%):' +
+      '\n• Product image prominent with soft glow' +
+      '\n• Product name: "' + name + '" in bold' +
+      '\n• Natural ingredient or decorative element relevant to product' +
+      '\n\nLEFT SIDE (60%):' +
+      '\n• TOP HALF: Split Before/After – LEFT half: ' + problemVisual + ' labeled "قبل" red bold | RIGHT half: ' + resultVisual + ' labeled "بعد" green bold' +
+      '\n• BOTTOM HALF: 4 benefit icons in 2x2 grid, each icon + Arabic bold text max 4 words:' +
+      '\n' + benefitLines +
+      '\n\nBACKGROUND: Clean gradient matching product vibe, subtle scientific pattern' +
+      '\nOVERALL: Bright, medical-grade aesthetic. Arabic RTL. No prices.';
+  }
+
+  return '';
+}
+
+function renderCreatives(creatives, a) {
+  const area = document.getElementById('cr-area');
+  const name = a.product_name || 'المنتج';
+  const userCtx = document.getElementById('cr-ctx')?.value.trim() || '';
+  const toRender = CR_SECS.filter(s => document.getElementById('crchk-'+s.id)?.checked);
+
+  if (!toRender.length) {
+    area.innerHTML = '<div class="empty"><div class="ei">⚠️</div><div class="et">اختار على الأقل نوع واحد</div></div>';
+    return;
+  }
+
+  area.innerHTML = toRender.map(sec => {
+    const d = creatives[sec.id] || {};
+    const prompt = buildPromptForSec(sec.id, d, name, userCtx);
+    _crPrompts[sec.id] = prompt;
+    const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return '<div class="cr-card">' +
+      '<div class="cr-card-header">' +
+      '<div class="cr-type">' + sec.emoji + ' ' + sec.name + '</div>' +
+      '<span class="cr-badge ' + sec.badge + '">960×960px</span>' +
+      '</div>' +
+      '<div class="cr-prompt-box">' + esc(prompt) + '</div>' +
+      '<div class="cr-footer">' +
+      `<button class="bcp" style="flex:1" onclick="_copyByKey('${sec.id}')">📋 نسخ الـ Prompt</button>` +
+      '</div></div>';
+  }).join('');
+}
+
+function _copyByKey(key) {
+  const p = _crPrompts[key];
+  if (p) { doCopy(p); showToast('✅ تم النسخ!'); }
+}
+
+
+// Drag support for creatives upload
+// upzCr drag init moved to init()
+
+// ── Section checkboxes ────────────────────────────────────────────────────────
+function buildSecChecks() {
+  const grid = document.getElementById('sec-checks');
+  if (!grid) return;
+  grid.innerHTML = ALL_SECS.map(s => `
+    <label class="sec-chk ${s.default ? 'active' : ''}" id="chklbl-${s.id}" onclick="toggleSecCheck('${s.id}')">
+      <input type="checkbox" ${s.default ? 'checked' : ''} id="chk-${s.id}">
+      <div class="chk-dot">${s.default ? '✓' : ''}</div>
+      <span>${s.name}</span>
+    </label>`).join('');
+}
+
+function toggleSecCheck(id) {
+  const inp = document.getElementById('chk-' + id);
+  const lbl = document.getElementById('chklbl-' + id);
+  const dot = lbl.querySelector('.chk-dot');
+  inp.checked = !inp.checked;
+  lbl.classList.toggle('active', inp.checked);
+  dot.textContent = inp.checked ? '✓' : '';
+  // Rebuild active SECS
+  SECS = ALL_SECS.filter(s => document.getElementById('chk-' + s.id)?.checked);
+  // Update button text
+  const btn = document.getElementById('bgen');
+  if (btn) btn.textContent = `⚡ ابدأ التوليد – ${SECS.length} أقسام`;
+}
+
+// Init checkboxes on load
+// ── Winning Ads ───────────────────────────────────────────────────────────────
+let adsFile = null, adsAnalysis = null, activeGen = 'veo', adsAngle = 'pain', activeStruct = 'aggressive';
+const _adsPrompts = {};
+
+const GEN_INFO = {
+  veo:  { dur: 8,  hint: 'Veo 3: prompts مفصلة للـ cinematic shots' },
+  grok: { dur: 6,  hint: 'Grok: prompts مكثفة وسريعة' }
+};
+
+const SCENES = [
+  { id:'hook',         label:'🔥 Hook',         color:'#f87171' },
+  { id:'problem',      label:'😣 Problem Deep',  color:'#fb923c' },
+  { id:'solution',     label:'✨ Solution',       color:'#4ade80' },
+  { id:'social_proof', label:'⭐ Social Proof',   color:'#f5c518' },
+  { id:'cta',          label:'🛒 CTA + FOMO',    color:'#a78bfa' }
+];
+
+function selectGen(g) {
+  activeGen = g;
+  ['veo','grok'].forEach(id => {
+    document.getElementById('gen-'+id)?.classList.toggle('active', id===g);
+  });
+  const hint = document.getElementById('gen-hint');
+  if (hint) hint.textContent = GEN_INFO[g].hint;
+}
+
+const STRUCT_INFO = {
+  aggressive: { hint: 'Macro shots ديال المشكل + pain aggressive + CTA urgent' },
+  clean:      { hint: 'Lifestyle + solution reveal + social proof + soft CTA' },
+  health:     { hint: 'Fatigue/domestic problem → fitness collage → product hero → CTA (Shilajit style)' },
+  ugc:        { hint: 'Authentic hand-held testimonial → sincere confession → result → trust oath → CTA' }
+};
+
+function selectStruct(s) {
+  activeStruct = s;
+  ['aggressive','clean','health','ugc'].forEach(id => {
+    document.getElementById('struct-'+id)?.classList.toggle('active', id===s);
+  });
+  const hint = document.getElementById('struct-hint');
+  if (hint) hint.textContent = STRUCT_INFO[s].hint;
+}
+
+function buildAdsAngles() {
+  const el = document.getElementById('ads-angles');
+  if (!el) return;
+  el.innerHTML = '<div class="angle-grid">' +
+    CR_ANGLES.map(a =>
+      `<button class="angle-btn ${a.id === adsAngle ? 'active' : ''}" id="aabtn-${a.id}" onclick="selectAdsAngle('${a.id}')">${a.label}</button>`
+    ).join('') + '</div>' +
+    `<div id="ads-angle-desc" style="font-size:10px;color:var(--mt);margin-top:3px;line-height:1.5">${CR_ANGLES.find(a=>a.id===adsAngle)?.desc||''}</div>`;
+}
+
+function selectAdsAngle(id) {
+  adsAngle = id;
+  document.querySelectorAll('#ads-angles .angle-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('aabtn-'+id)?.classList.add('active');
+  const desc = document.getElementById('ads-angle-desc');
+  if (desc) desc.textContent = CR_ANGLES.find(a=>a.id===id)?.desc||'';
+}
+
+function handleAdsFile(inp) {
+  const f = inp.files[0];
+  if (!f) return;
+  adsFile = f;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('pvwi-ads').src = e.target.result;
+    document.getElementById('pvw-ads').style.display = 'block';
+  };
+  reader.readAsDataURL(f);
+  document.getElementById('upi-ads').textContent = '✅';
+  document.getElementById('uph-ads').innerHTML = `<strong>${f.name.substring(0,20)}</strong>`;
+  document.getElementById('ads-gen-btn').disabled = false;
+  extractColors(f).then(c => { window._adsColors = c; });
+}
+
+function removeAdsFile() {
+  adsFile = null;
+  document.getElementById('pvw-ads').style.display = 'none';
+  document.getElementById('finp-ads').value = '';
+  document.getElementById('upi-ads').textContent = '🖼️';
+  document.getElementById('uph-ads').innerHTML = '<strong>اضغط أو اسحب</strong>';
+  document.getElementById('ads-gen-btn').disabled = true;
+}
+
+async function generateAds() {
+  if (!adsFile || !srvOk) return;
+  const btn = document.getElementById('ads-gen-btn');
+  const pgb = document.getElementById('ads-pgb');
+  const pgl = document.getElementById('ads-pgl');
+  btn.disabled = true;
+  document.getElementById('ads-prog-wrap').style.display = 'block';
+  pgl.style.color = '';
+
+  try {
+    pgl.textContent = '🔍 جاري تحليل المنتج...';
+    pgb.style.width = '15%';
+    const fd0 = new FormData();
+    fd0.append('image', adsFile);
+    const adsCtx = document.getElementById('ads-ctx').value.trim();
+    if (adsCtx) fd0.append('user_context', adsCtx);
+    const ec = window._adsColors;
+    if (ec?.hex) { fd0.append('extracted_colors', ec.hex.join(',')); fd0.append('extracted_desc', ec.desc.join(',')); }
+    const r0 = await authFetch('/api/analyze', { method:'POST', body:fd0 });
+    const d0 = await r0.json();
+    if (!d0.ok) throw new Error(d0.error);
+    adsAnalysis = d0.analysis;
+    pgb.style.width = '35%';
+
+    pgl.textContent = '✍️ جاري توليد الـ Video Scripts...';
+    const fd1 = new FormData();
+    fd1.append('productContext', JSON.stringify(adsAnalysis));
+    fd1.append('user_context', adsCtx);
+    fd1.append('angle', adsAngle);
+    fd1.append('generator', activeGen);
+    fd1.append('scene_duration', GEN_INFO[activeGen].dur);
+    fd1.append('structure', activeStruct);
+    const r1 = await authFetch('/api/generate-ads', { method:'POST', body:fd1 });
+    const d1 = await r1.json();
+    if (!d1.ok) throw new Error(d1.error);
+    pgb.style.width = '100%';
+    pgl.textContent = '✅ Scripts جاهزة!';
+    pgl.style.color = '#4ade80';
+    renderAds(d1.scenes, adsAnalysis);
+  } catch(err) {
+    pgl.textContent = '❌ ' + err.message;
+    pgl.style.color = '#f87171';
+  }
+  btn.disabled = false;
+}
+
+function renderAds(scenes, a) {
+  const area = document.getElementById('ads-area');
+  const dur = GEN_INFO[activeGen].dur;
+  const genName = activeGen === 'veo' ? 'Veo 3' : 'Grok';
+  const angleLabel = CR_ANGLES.find(x=>x.id===adsAngle)?.label || '';
+
+  const structLabel = activeStruct === 'aggressive' ? '🔥 Aggressive' : activeStruct === 'health' ? '💪 Health Booster' : activeStruct === 'ugc' ? '🤝 UGC Guarantee' : '✨ Clean';
+  area.innerHTML = `<div style="margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">
+    <div style="font-size:13px;font-weight:600">🎬 ${genName} · ${dur}s/scene · ${angleLabel} · ${structLabel}</div>
+    <button class="bsm" onclick="copyAllAds()">📋 نسخ الكل</button>
+  </div>` +
+
+  SCENES.map((sc, i) => {
+    const d = scenes[sc.id] || {};
+    const prompt = buildScenePrompt(sc.id, d, a, dur);
+    // Combined: Script + Prompt in one block for easy copy-paste to Veo3/Grok
+    const combined = '📜 SCRIPT:\n' + (d.script||'') + '\n\n🎬 ' + genName + ' PROMPT:\n' + prompt;
+    _adsPrompts[sc.id] = combined;
+
+    return `<div class="scene-card">
+      <div class="scene-header">
+        <div class="scene-num">${i+1}</div>
+        <div class="scene-label" style="color:${sc.color}">${sc.label}</div>
+        <div class="scene-dur">${dur}s</div>
+      </div>
+      <div class="scene-body">
+        <div class="scene-section">
+          <div class="scene-section-title">📜 Script (الدارجة)</div>
+          <div class="scene-text">${esc(d.script||'')}</div>
+        </div>
+        <div class="scene-section">
+          <div class="scene-section-title">🎬 ${genName} Prompt</div>
+          <div class="scene-text en">${esc(prompt)}</div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <button class="bcp" style="flex:1;background:rgba(245,197,24,.1);border-color:rgba(245,197,24,.4);color:var(--acc)" onclick="_copyAdsScene('${sc.id}')">🚀 نسخ Script + Prompt</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function buildScenePrompt(sceneId, d, a, dur) {
+  const name = a.product_name || 'المنتج';
+  const vibe = a.product_vibe || 'premium';
+  const angleA = CR_ANGLES.find(x=>x.id===adsAngle);
+  const angleStr = angleA ? angleA.label.replace(/[^\w\s\/]/g,'').trim() : '';
+  const isVeo = activeGen === 'veo';
+  const userCtxAds = document.getElementById('ads-ctx')?.value.trim() || '';
+  const ctxFocus = userCtxAds ? ' FOCUS ON: ' + userCtxAds + '.' : '';
+  const trustLine = '';
+  const isAggressive = activeStruct === 'aggressive';
+  // Character + visual consistency across all 5 scenes
+  const consistency = `
+CRITICAL CONTINUITY RULES (apply to ALL 5 scenes of this video):
+1. SAME PROTAGONIST: Use the exact same person/character throughout all scenes (same face, skin tone, age, style, clothing unless changed for before/after).
+2. SAME VISUAL CONCEPT: All scenes must feel part of ONE coherent video – same color palette, same filming style, same world.
+3. SEAMLESS FLOW: Each scene continues naturally from the previous. The viewer should feel they are watching one continuous story.
+4. This is scene ${SCENES.findIndex(s=>s.id===sceneId)+1} of 5.`;
+
+  const base = `${dur}-second ${isVeo?'Veo 3':'Grok'} video scene. Vertical 9:16. No text overlay rendered by AI. Photorealistic. Angle: ${angleStr}.${ctxFocus}${consistency}`;
+
+  const specs = {
+    hook: activeStruct === 'ugc' ? `${base}
+UGC OATH SHOT – hand holding product over Quran. ALL 5 scenes use this same setup.
+Visual: ${isVeo?'STATIC VERTICAL 9:16. A mans right hand firmly holds the product jar/bottle with label clearly visible. Directly behind the hand: an open Quran on an ornate wooden Rehal stand, resting on a grey/beige carpet. The Quran is visible but BLURRED (bokeh) – recognizable but out of focus. Product label is the only sharp element. NO face shown at any point. Only hand + product + Quran background. Mobile phone quality, raw and authentic.':'Hand holding product, open Quran on wooden stand behind it, no face shown.'}
+Camera: ${isVeo?'Static handheld vertical shot. Close-up on product in hand. SHALLOW DEPTH OF FIELD – product label razor sharp in foreground. Quran + Rehal stand softly BLURRED bokeh in background. Smartphone portrait mode effect. Natural ambient light. No studio.':'Static vertical, hand+product center, Quran background.'}
+Lighting: Natural diffused indoor light. Soft shadows. Warm ambient. Authentic home feel.
+Mood: Sincere Islamic oath. "I swear by this holy book this product works."
+CRITICAL: NO FACE. Only hand gripping product + Quran background throughout.` :
+    activeStruct === 'health' ? `${base}
+OPENING – domestic fatigue/problem scene. Fast energy.
+Visual: ${isVeo?'Man looking exhausted, slumped, low energy. Woman with arms crossed, unimpressed. Domestic setting – doorway, bedroom, living room. Captures tension and disappointment. Text overlay style possible.':'Static medium shot of tired man and skeptical woman.'}
+Camera: ${isVeo?'Static medium shot. Flat indoor lighting. Slightly desaturated/cool tones to convey low energy.':'Static, slightly cool-toned.'}
+Mood: Lethargy, domestic friction, low vitality. Problem is RELATABLE.
+Lighting: Flat, slightly cool indoor light. Desaturated.
+Subject: ${d.problem_shown||'man lacking energy, woman looking disappointed'}
+DO NOT show product yet. Pure problem scene.` :
+    isAggressive ? `${base}
+OPENING HOOK – first 2s AGGRESSIVE macro shot.
+Visual: ${isVeo?'EXTREME MACRO close-up of the SPECIFIC PROBLEM (decay, skin issue, pain sign) – same as real ad footage. Hyper-realistic texture.':'Fast dramatic close-up of the problem.'} ${d.visual||''}
+Camera: ${isVeo?'Static macro, then slow push-in. Clinical overhead lighting. Shallow depth of field – only the problem in focus.':'Tight static shot on problem.'}
+Lighting: Harsh clinical white light OR dark dramatic contrast. High key or extreme chiaroscuro.
+Mood: Shocking, visceral, uncomfortable. Viewer must immediately recognize the problem.
+Subject: Show the PHYSICAL PROBLEM itself (not just a person in pain) – macro detail of the issue.
+Sound: Sharp jarring sound, then silence.` :
+    `${base}
+OPENING HOOK – warm lifestyle opening.
+Visual: ${d.visual||'person enjoying life, smiling, confident'}
+Camera: ${isVeo?'Smooth handheld follow, warm natural light, golden hour':'Wide shot, natural setting'}
+Mood: Aspirational, positive. Show the life AFTER having the solution.
+Lighting: Warm golden sunlight, soft and natural.`,
+
+    problem: activeStruct === 'ugc' ? `${base}
+UGC PROBLEM – same hand+product+Quran setup. Voice narrates suffering.
+Visual: ${isVeo?'SAME EXACT SETUP as scene 1: right hand holding product label toward camera, open Quran on wooden Rehal stand behind it on carpet. Hand stays steady. Camera stays static. NO FACE. The suffering is described only through voice narration while hand and product remain in frame.':'Same static hand+product+Quran shot. Voice describes the problem.'}
+Camera: ${isVeo?'Identical static vertical shot. No camera movement. Same framing as hook. Product label razor sharp. Quran background always blurred bokeh. Consistent shallow DOF throughout.':'Same static vertical shot as scene 1.'}
+Lighting: Same natural ambient. Identical to hook scene. Consistent throughout.
+Mood: Vulnerability narrated through voice only. Visual stays calm and trustworthy.
+CRITICAL: NO FACE. No camera movement. Same hand+product+Quran composition.` :
+    activeStruct === 'health' ? `${base}
+PROBLEM DEEP – rapid cuts showing consequences of low energy.
+Visual: ${isVeo?'Fast flickering cuts: woman sighing in bed / man frustrated / couple not connecting / man avoiding eye contact. Then quick cut to a muscular man in gym doing heavy leg press – contrast between CURRENT state and DESIRED state.':'Quick cuts between domestic frustration and athletic aspiration.'}
+Camera: ${isVeo?'Rapid editing. Domestic scenes: static medium shots, slightly shaky. Gym scene: low-angle hero shot, high contrast.':'Fast cuts alternating problem and aspiration.'}
+Mood: Transitions from frustration to aspiration. "I want to be that guy."
+Lighting: Domestic scenes cool/flat. Gym scene bright high-contrast.
+Sound: Fast percussive hip-hop beat building intensity.` :
+    isAggressive ? `${base}
+PROBLEM DEEP – macro detail + 3D animation style.
+Visual: ${isVeo?'Alternating: EXTREME MACRO of problem area (texture, decay, damage in hyper-detail) AND 3D CGI animation showing the problem mechanism inside. Clinical microscopic view.':'Close-up of problem with text overlay explaining the issue.'} ${d.visual||''}
+Camera: ${isVeo?'Static macro shots. Then 3D pan around animated problem model. Clinical sterile aesthetic.':'Static tight shots with clinical lighting.'}
+Lighting: Bright clinical white light for macro shots. Dark dramatic contrast for CGI animation.
+Mood: Educational + alarming. "This is what is REALLY happening to you."
+Show: ${d.problem_shown||'the physical damage/issue in extreme detail'}
+Include: Scientific/medical visual language – animations, labels, cross-sections.` :
+    `${base}
+PROBLEM DEEP – emotional journey.
+Visual: ${d.visual||'person dealing with the problem in daily life'}
+Camera: ${isVeo?'Intimate handheld, close on face and emotions':'Medium shot, empathetic angle'}
+Mood: Empathetic, relatable. "I understand your struggle."
+Lighting: Slightly desaturated, cooler tones.`,
+
+    solution: activeStruct === 'ugc' ? `${base}
+UGC SOLUTION – same hand+product+Quran. Voice describes results.
+Visual: ${isVeo?'IDENTICAL COMPOSITION: right hand holding product firmly, Quran open on wooden stand visible behind on carpet. The hand may slightly tilt the product to show the label from a different angle, but Quran stays in background. NO FACE. Voice narrates the positive results and transformation while visual stays the same trustworthy oath setup.':'Same hand+product+Quran static shot. Voice narrates results.'}
+Camera: ${isVeo?'Same static vertical. Maybe slight tilt of product to show label better. Quran always visible but BLURRED in background. Product label always sharp. No face ever shown.':'Same static vertical composition.'}
+Lighting: Same natural ambient throughout all scenes.
+Mood: Relief and gratitude narrated through voice. Visual continues the oath/trust atmosphere.
+CRITICAL: NO FACE. Product + Quran composition maintained.` :
+    activeStruct === 'health' ? `${base}
+SOLUTION – fitness collage showing the transformation results.
+Visual: ${isVeo?'HIGH ENERGY montage: muscular man emerging from pool (water drops glistening, backlit), man doing impressive handstand against wall, older man drinking product confidently and shaking shoulders in satisfaction, man flexing on balcony with scenic mountain/city view behind him. Each clip 1-2 seconds max.':'Fitness montage: pool, gym, outdoor strength.'}
+Camera: ${isVeo?'Low-angle hero shots for muscles. Slow motion for water/pool emergence. Tracking for outdoor scenes. Rim lighting to emphasize muscle definition.':'Low-angle hero shots, slow motion.'}
+Lighting: Bright outdoor golden hour for balcony. High-contrast gym lighting. Pool scene with natural bright sunlight.
+Mood: Peak masculinity. Energy. Vitality. Dominance. "This is what you WILL become."
+Subjects: Varied – young athletic man, older confident man, muscular physique man.` :
+    isAggressive ? `${base}
+SOLUTION REVEAL – product hero shot + before/after transformation.
+Visual: ${isVeo?'Split screen or morph transition: LEFT=macro of problem (dark, damaged), RIGHT=macro of same area AFTER product use (clean, restored, healthy). Then product bottle HERO SHOT with clinical white background and dramatic lighting.':'Product reveal with split before/after.'} ${d.visual||''}
+Camera: ${isVeo?'Static split-screen. Then slow 360° orbit around product bottle. High-key studio lighting.':'Product close-up, clean background.'}
+Lighting: Sterile white clinical light for split screen. Dramatic spot lighting for product hero shot.
+Product: "${name}" – label clearly visible. Glowing, premium presentation.
+Mood: Scientific breakthrough. Relief. "Finally, a real solution."
+Include: Text overlay style – "BEFORE / AFTER" labels if possible.` :
+    `${base}
+SOLUTION REVEAL – warm transformation.
+Visual: ${d.visual||'product being used naturally, then person feeling the difference'}
+Camera: ${isVeo?'Smooth reveal shot of product. Then lifestyle montage of person using it happily.':'Clean product shot, then lifestyle.'}
+Mood: Hope, relief, excitement. Warm and positive.
+Lighting: Golden warm light, bright and inviting.`,
+
+    social_proof: activeStruct === 'ugc' ? `${base}
+UGC OATH – same hand+product+Quran. Islamic oath of honesty.
+Visual: ${isVeo?'SAME COMPOSITION MAINTAINED: right hand holding product label facing camera. Quran open on ornate wooden Rehal stand on carpet behind. The hand grips the jar more firmly during the oath moment. Thumb may press on label. NO FACE. The Quran in background is the visual witness to the oath being sworn in voice narration.':'Same hand+product+Quran. Hand grips product more firmly during oath.'}
+Camera: ${isVeo?'Static vertical. Same framing. Possibly slight push-in zoom on product label during the oath. Quran stays visible but softly BLURRED in background throughout. Product stays sharp.':'Same static vertical. Slight zoom on label optional.'}
+Lighting: Same warm ambient natural light. No change.
+Mood: Solemn Islamic oath. "والله العظيم" sworn while Quran is visible. Most powerful trust moment.
+CRITICAL: NO FACE. The Quran behind is the oath witness – keep it visible but BLURRED in background. Product stays sharp foreground.` :
+    activeStruct === 'health' ? `${base}
+SOCIAL PROOF – authentic man taking product + result.
+Visual: ${isVeo?'Young man casually tosses capsule/drop into mouth and swallows naturally (UGC style, authentic not staged). Then older Asian/Mediterranean man drinks from small bottle, makes satisfied face, does energetic shoulder dance – revitalized and happy. Authentic feel – real people, real reactions.':'UGC style: man taking product and reacting positively.'}
+Camera: ${isVeo?'Handheld UGC style for capsule shot. Medium static for older man. Natural indoor/outdoor light.':'Authentic handheld UGC.'}
+Mood: Real, authentic, "it actually works." Not a Hollywood actor – a real person.
+Lighting: Natural ambient. No studio lighting – feels genuine.
+Energy: Relief + satisfaction. "Finally something that works for me."` :
+    isAggressive ? `${base}
+SOCIAL PROOF – UGC testimonial + macro results.
+Visual: ${isVeo?'Split: TOP HALF = authentic UGC-style selfie video of real customer (relatable, not actor-looking, slightly imperfect lighting). BOTTOM HALF = macro close-up of their RESULT (the improved area). Text overlay: "MY DENTIST WAS SHOCKED..." style caption.':'Authentic person showing before/after result.'} ${d.visual||''}
+Camera: ${isVeo?'Handheld authentic selfie-style for person. Static macro for result close-up.':'Handheld UGC style.'}
+Lighting: Natural indoor light for testimonial (ring light visible is OK). Clinical macro light for result.
+Mood: Authentic, surprising, social-proof heavy. "Real person, real result."
+Person: Relatable Algerian person, everyday look, genuine emotion.` :
+    `${base}
+SOCIAL PROOF – warm testimonial.
+Visual: ${d.visual||'happy customer showing results naturally'}
+Camera: ${isVeo?'Warm handheld, close on smiling face':'Medium shot, natural setting'}
+Mood: Genuine happiness, gratitude.
+Lighting: Warm natural light.`,
+
+    cta: activeStruct === 'ugc' ? `${base}
+UGC CTA – final hand+product+Quran shot with text overlay.
+Visual: ${isVeo?'FINAL SCENE – same composition: right hand holds product toward camera, Quran on wooden Rehal stand behind on carpet. Product label fully centered and readable. Text overlay appears: "اطلب الآن" in bold yellow Arabic. Red arrow pointing downward. NO FACE. The Quran remains visible as final trust seal – the entire video has been sworn on it.':'Same hand+product+Quran final shot with اطلب الآن text overlay and red arrow.'}
+Camera: ${isVeo?'Static vertical. Product label fully in frame. Quran visible behind. Text overlay clean and bold. No movement – the stillness conveys honesty.':'Same static composition. Text overlay with CTA.'}
+Lighting: Same natural ambient. Consistent with all previous scenes.
+Mood: Final honest recommendation sealed by the visible Quran. "I swear on this holy book – order now."
+Elements: اطلب الآن (bold yellow) + red arrow + الدفع عند الاستلام + توصيل لباب المنزل text overlays.
+CRITICAL: NO FACE. Same hand+product+Quran throughout. Consistency = trust.` :
+    activeStruct === 'health' ? `${base}
+CTA – product hero + order now.
+Visual: ${isVeo?'Product bottle/capsules on clean surface with black and gold aesthetic. Man flexing impressive physique on scenic balcony with mountain vista as background. Then product shot with "اطلب الآن" (Order Now) text overlay in bold yellow Arabic. Red arrow pointing down.':'Product hero shot with bold CTA overlay.'}
+Camera: ${isVeo?'Static product hero shot with dramatic lighting. Then cut to physique shot. End on product + CTA graphic.':'Clean product shot with CTA text.'}
+Lighting: Dramatic rim lighting for physique shot. Studio hero lighting for product.
+Elements: Product + "اطلب الآن" bold yellow text + red arrow + الدفع عند الاستلام trust badge.
+Mood: Aspirational urgency. "Order now and become this man."
+Ending: Static product shot – dramatic and clean.` :
+    isAggressive ? `${base}
+CTA + FOMO – urgent promotional closer.
+Visual: ${isVeo?'Product bottle on clean white/silver surface. Large RED discount badge. Arrow pointing down. Text: SALE ENDS SOON. Hand pointing at product.':'Product with discount overlay.'} ${d.visual||''}
+Camera: ${isVeo?'Static product hero shot. Quick cuts to discount badge, arrow, close-up.':'Static promotional shot.'}
+Lighting: Bright studio white. Clean and professional.
+Mood: URGENCY. Limited stock. Act NOW.
+Elements: Product + discount + توصيل لباب المنزل | الدفع عند الاستلام badge.
+Ending: Static product shot with all promo elements.` :
+    `${base}
+CTA + FOMO – warm closing.
+Visual: ${d.visual||'happy person then product with offer'}
+Camera: ${isVeo?'Lifestyle to product smooth reveal':'Clean product shot'}
+Mood: Positive FOMO. Warm and inviting.
+MUST SHOW: توصيل لباب المنزل | الدفع عند الاستلام`
+  };
+  return specs[sceneId] || base;
+}
+
+function _copyAdsScene(id) {
+  const text = _adsPrompts[id];
+  if (text) { doCopy(text); showToast('✅ Script + Prompt تم نسخهم!'); }
+}
+
+function copyAllAds() {
+  const all = SCENES.map(sc => '=== ' + sc.label.toUpperCase() + ' ===\n' + (_adsPrompts[sc.id]||'')).join('\n\n');
+
+  if (all.trim()) { doCopy(all); showToast('✅ كل الـ Prompts تم نسخهم!'); }
+  else showToast('⚠️ ولّد أولاً!');
+}
+
+// ── Pricing Calculator ────────────────────────────────────────────────────────
+function v(id) { return parseFloat(document.getElementById(id)?.value) || 0; }
+function fmt(n, dec=0) { return isNaN(n) ? '—' : n.toLocaleString('fr-DZ', {minimumFractionDigits:dec, maximumFractionDigits:dec}); }
+function setEl(id, val, cls='') {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = val;
+  el.className = 'pr-val' + (cls ? ' '+cls : '');
+}
+
+function calcPricing() {
+  const buy        = v('pr_buy');
+  const sell       = v('pr_sell');
+  const usd        = v('pr_usd');
+  const confirmR   = v('pr_confirm') / 100;
+  const deliverR   = v('pr_deliver') / 100;
+  const pack       = v('pr_pack');
+  const ship       = v('pr_ship');
+  const confCost   = v('pr_conf_cost');
+  const retCost    = v('pr_return_cost');
+  const monthly    = v('pr_monthly');
+  const adBudget   = v('pr_ad_budget');
+  const cpo        = v('pr_cpo');
+
+  // Derived rates
+  const returnR    = 1 - deliverR;   // % مرجعة من المرسلة
+  const overallDel = confirmR * deliverR; // نسبة التوصيل الفعلية من الـ Leads
+
+  // Per order calcs
+  const gross      = sell - buy;
+  const cpoDzd     = cpo * usd;
+  const cpoFull    = cpoDzd / overallDel; // تكلفة إعلان / طلبية مكتملة
+  const returnPerDel = (retCost * returnR * confirmR) / overallDel;
+  const totalCost  = buy + cpoFull + pack + ship + confCost + returnPerDel;
+  const netPerDel  = sell - totalCost;
+  const margin     = sell > 0 ? netPerDel / sell : 0;
+
+  // Daily calcs
+  const adBudgetDzd = adBudget * usd;
+  const leadsD     = adBudgetDzd / cpoDzd;
+  const shippedD   = leadsD * confirmR;
+  const deliveredD = shippedD * deliverR;
+  const returnedD  = shippedD * returnR;
+
+  const revenueD   = deliveredD * sell;
+  const grossProfD = deliveredD * gross;
+  const totalCostD = deliveredD * totalCost + monthly/30;
+  const netD       = revenueD - totalCostD;
+
+  // Set per-order results
+  setEl('r_gross', fmt(gross) + ' دج');
+  setEl('r_cpo_usd', fmt(cpoFull / usd, 2) + ' $');
+  setEl('r_cpo_dzd', fmt(cpoFull) + ' دج');
+  setEl('r_return_per', fmt(returnPerDel) + ' دج');
+  setEl('r_total_cost', fmt(totalCost) + ' دج');
+  setEl('r_net', fmt(netPerDel) + ' دج', netPerDel >= 0 ? 'pos' : 'neg');
+  setEl('r_margin', fmt(margin * 100, 1) + ' %', margin >= 0 ? 'pos' : 'neg');
+  setEl('r_return_rate', fmt(returnR * 100, 1) + ' %');
+
+  // Set table
+  const periods = [1, 7, 30];
+  const ids_d = ['t_budget_d','t_budget_w','t_budget_m'];
+  const ids_l = ['t_leads_d','t_leads_w','t_leads_m'];
+  const ids_s = ['t_ship_d','t_ship_w','t_ship_m'];
+  const ids_dl= ['t_del_d','t_del_w','t_del_m'];
+  const ids_r = ['t_ret_d','t_ret_w','t_ret_m'];
+  const ids_rv= ['t_rev_d','t_rev_w','t_rev_m'];
+  const ids_gp= ['t_profit_d','t_profit_w','t_profit_m'];
+  const ids_n = ['t_net_d','t_net_w','t_net_m'];
+
+  periods.forEach((p, i) => {
+    const net = netD * p;
+    setEl(ids_d[i],  fmt(adBudgetDzd * p) + ' دج');
+    setEl(ids_l[i],  fmt(leadsD * p, 0));
+    setEl(ids_s[i],  fmt(shippedD * p, 0));
+    setEl(ids_dl[i], fmt(deliveredD * p, 0));
+    setEl(ids_r[i],  fmt(returnedD * p, 0));
+    setEl(ids_rv[i], fmt(revenueD * p) + ' دج');
+    setEl(ids_gp[i], fmt(grossProfD * p) + ' دج');
+    const netEl = document.getElementById(ids_n[i]);
+    if (netEl) {
+      netEl.textContent = fmt(net) + ' دج';
+      netEl.style.color = net >= 0 ? 'var(--ok)' : 'var(--er)';
+    }
+  });
+
+  // Compare 3 prices (current sell ± 20%)
+  // Prices from manual inputs (default to sell ×0.7/×1/×1.3 on first load)
+  const p1el = document.getElementById('cmp_p1');
+  const p2el = document.getElementById('cmp_p2');
+  const p3el = document.getElementById('cmp_p3');
+  // compare inputs start empty
+  const prices = [parseFloat(p1el?.value)||0, parseFloat(p2el?.value)||0, parseFloat(p3el?.value)||0];
+  renderPriceCompare(prices, buy, cpoFull, confirmR, deliverR, pack, ship, confCost, retCost, returnR, overallDel);
+}
+
+function renderPriceCompare(prices, buy, cpoFull, confirmR, deliverR, pack, ship, confCost, retCost, returnR, overallDel) {
+  const container = document.getElementById('pr-compare');
+  if (!container) return;
+
+  const results = prices.map(s => {
+    const returnPerDel = (retCost * returnR * confirmR) / overallDel;
+    const totalCost = buy + cpoFull + (pack * confirmR / overallDel) + ship + confCost + returnPerDel;
+    const net = s - totalCost;
+    const margin = s > 0 ? net / s : 0;
+    return { price: s, net, margin };
+  });
+
+  const maxNet = Math.max(...results.map(r => r.net));
+
+  container.innerHTML = results.map((r, i) => {
+    const isWinner = r.net === maxNet && r.net > 0;
+    const isLoser  = r.net < 0;
+    const cls      = isWinner ? 'pr-cmp-card winner' : isLoser ? 'pr-cmp-card loser' : 'pr-cmp-card';
+    const netColor = r.net >= 0 ? 'var(--ok)' : 'var(--er)';
+    const status   = r.net >= 0 ? '✅ رابح' : '❌ خاسر';
+    const label    = ['السعر 1','السعر 2','السعر 3'][i];
+    return '<div class="' + cls + '">' +
+      '<div style="font-size:11px;color:var(--mt);margin-bottom:4px">' + label + '</div>' +
+      '<div class="pr-cmp-price">' + fmt(r.price) + ' <span style="font-size:13px">دج</span></div>' +
+      '<div class="pr-cmp-net" style="color:' + netColor + '">ربح: ' + fmt(r.net) + ' دج</div>' +
+      '<div class="pr-cmp-margin">هامش: ' + fmt(r.margin*100,1) + ' %</div>' +
+      '<div class="pr-cmp-status" style="color:' + netColor + '">' + status + '</div>' +
+      (isWinner ? '<div style="font-size:10px;color:var(--ok);margin-top:4px">⭐ الأمثل</div>' : '') +
+    '</div>';
+  }).join('');
+}
+
+function resetPricing() {
+  const defaults = {pr_buy:1000,pr_sell:2900,pr_usd:255,pr_confirm:70,pr_deliver:70,pr_pack:80,pr_ship:100,pr_conf_cost:100,pr_return_cost:100,pr_monthly:2000,pr_ad_budget:50,pr_cpo:1.5};
+  Object.entries(defaults).forEach(([id,val]) => {
+    const el = document.getElementById(id);
+    if (el) { el.value = val; el._initialized = false; }
+  });
+  ['cmp_p1','cmp_p2','cmp_p3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el._initialized = false;
+  });
+  calcPricing();
+}
+
+// ── Ad Copies ─────────────────────────────────────────────────────────────────
+let activePlatform = 'fb', copiesAngle = 'pain';
+const _copyTexts = {};
+
+const PLAT_INFO = {
+  fb: { hint: 'Facebook: نص طويل عاطفي + emojis كثيرة + storytelling', maxChars: 2000 },
+  tt: { hint: 'TikTok: نص قصير punch + hooks سريعة + hashtags', maxChars: 500  }
+};
+
+const COPY_TYPES = [
+  { id:'pain_story',   name:'😣 Pain Story',    default:true  },
+  { id:'fear_hook',    name:'😰 Fear Hook',      default:true  },
+  { id:'fast_result',  name:'⚡ Fast Result',    default:true  },
+  { id:'curiosity',    name:'🤔 Curiosity',      default:false },
+  { id:'social_proof', name:'👥 Social Proof',   default:false }
+];
+
+function selectPlatform(p) {
+  activePlatform = p;
+  ['fb','tt'].forEach(id => document.getElementById('plat-'+id)?.classList.toggle('active', id===p));
+  const hint = document.getElementById('plat-hint');
+  if (hint) hint.textContent = PLAT_INFO[p].hint;
+}
+
+function buildCopiesAngles() {
+  const el = document.getElementById('copies-angles');
+  if (!el) return;
+  el.innerHTML = '<div class="angle-grid">' +
+    CR_ANGLES.map(a =>
+      `<button class="angle-btn ${a.id===copiesAngle?'active':''}" id="cabtn-${a.id}" onclick="selectCopiesAngle('${a.id}')">${a.label}</button>`
+    ).join('') + '</div>' +
+    `<div id="copies-angle-desc" style="font-size:10px;color:var(--mt);margin-top:3px;line-height:1.5">${CR_ANGLES.find(a=>a.id===copiesAngle)?.desc||''}</div>`;
+}
+
+function selectCopiesAngle(id) {
+  copiesAngle = id;
+  document.querySelectorAll('#copies-angles .angle-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('cabtn-'+id)?.classList.add('active');
+  const d = document.getElementById('copies-angle-desc');
+  if (d) d.textContent = CR_ANGLES.find(a=>a.id===id)?.desc||'';
+}
+
+function buildCopyTypeChecks() {
+  const grid = document.getElementById('copies-type-checks');
+  if (!grid) return;
+  grid.innerHTML = COPY_TYPES.map(t => {
+    const cls = t.default ? 'sec-chk active' : 'sec-chk';
+    const chk = t.default ? 'checked' : '';
+    const dot = t.default ? '✓' : '';
+    return `<label class="${cls}" id="ctlbl-${t.id}" onclick="toggleCopyType('${t.id}')"><input type="checkbox" ${chk} id="ctchk-${t.id}"><div class="chk-dot">${dot}</div><span>${t.name}</span></label>`;
+  }).join('');
+}
+
+function toggleCopyType(id) {
+  const inp = document.getElementById('ctchk-'+id);
+  const lbl = document.getElementById('ctlbl-'+id);
+  const dot = lbl.querySelector('.chk-dot');
+  inp.checked = !inp.checked;
+  lbl.classList.toggle('active', inp.checked);
+  dot.textContent = inp.checked ? '✓' : '';
+}
+
+async function generateCopies() {
+  const ctx = document.getElementById('copies-ctx')?.value.trim() || '';
+  const btn = document.getElementById('copies-gen-btn');
+  const pgb = document.getElementById('copies-pgb');
+  const pgl = document.getElementById('copies-pgl');
+  btn.disabled = true;
+  document.getElementById('copies-prog-wrap').style.display = 'block';
+  pgl.style.color = '';
+
+  const selectedTypes = COPY_TYPES; // كل الأنواع دايماً
+
+  try {
+    pgl.textContent = '✍️ جاري توليد الـ Ad Copies...';
+    pgb.style.width = '20%';
+
+    const fd = new FormData();
+    fd.append('platform', activePlatform);
+    fd.append('angle', 'pain');
+    fd.append('user_context', ctx);
+    fd.append('copy_types', selectedTypes.map(t=>t.id).join(','));
+    const r = await authFetch('/api/generate-copies', { method:'POST', body:fd });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error);
+
+    pgb.style.width = '100%';
+    pgl.textContent = '✅ الـ Copies جاهزة!';
+    pgl.style.color = '#4ade80';
+    renderCopies(d.copies, selectedTypes);
+  } catch(err) {
+    pgl.textContent = '❌ ' + err.message;
+    pgl.style.color = '#f87171';
+  }
+  btn.disabled = false;
+}
+
+function renderCopies(copies, types) {
+  const area = document.getElementById('copies-area');
+  const plat = activePlatform === 'fb' ? '📘 Facebook' : '🎵 TikTok';
+  const maxCh = PLAT_INFO[activePlatform].maxChars;
+  const angleLabel = CR_ANGLES.find(x=>x.id===copiesAngle)?.label||'';
+
+  area.innerHTML = `<div style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
+    <div style="font-size:13px;font-weight:600">${plat} · ${angleLabel}</div>
+    <button class="bsm" onclick="copyAllCopies()">📋 نسخ الكل</button>
+  </div>` +
+
+  types.map(t => {
+    const text = copies[t.id] || '';
+    _copyTexts[t.id] = text;
+    const chars = text.length;
+    const over  = chars > maxCh;
+    return '<div class="copy-card">' +
+      '<div class="copy-card-hdr">' +
+        '<div class="copy-card-title">' + t.name + '</div>' +
+        '<span class="copy-card-badge">' + plat + '</span>' +
+      '</div>' +
+      '<div class="copy-text">' + escHtml(text) + '</div>' +
+      '<div class="copy-footer">' +
+        '<button class="bcp" style="flex:1" onclick="_copyCopyText(\"' + t.id + '\")">📋 نسخ</button>' +
+        '<span class="copy-char-count" style="color:' + (over?'#f87171':'var(--mt)') + '">' + chars + ' حرف</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function _copyCopyText(id) {
+  const t = _copyTexts[id];
+  if (t) { doCopy(t); showToast('✅ تم النسخ!'); }
+}
+
+function copyAllCopies() {
+  const all = Object.values(_copyTexts).filter(Boolean).join('\n\n' + '─'.repeat(30) + '\n\n');
+  if (all) { doCopy(all); showToast('✅ كل الـ Copies تم نسخهم!'); }
+  else showToast('⚠️ ولّد أولاً!');
+}
+
+// ── Logout ────────────────────────────────────────────────────────────────────
+async function logout() {
+  await authFetch('/api/logout', { method:'POST' }).catch(()=>{});
+  localStorage.removeItem('eh_token');
+  localStorage.removeItem('eh_role');
+  localStorage.removeItem('eh_email');
+  window.location.href = '/login.html';
+}
+
+// ── Admin panel ───────────────────────────────────────────────────────────────
+async function loadAdminPanel() {
+  const r = await authFetch('/api/admin/users');
+  const d = await r.json();
+  if (!d.ok) return;
+  const tbl = document.getElementById('users-table');
+  if (!tbl) return;
+  tbl.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:12px">' +
+    '<thead><tr style="color:var(--mt);border-bottom:1px solid var(--bd)">' +
+    '<th style="text-align:right;padding:6px">البريد</th>' +
+    '<th style="padding:6px">الدور</th>' +
+    '<th style="padding:6px">Key</th>' +
+    '<th style="padding:6px"></th>' +
+    '</tr></thead><tbody>' +
+    d.users.map(u => '<tr style="border-bottom:1px solid rgba(255,255,255,.05)">' +
+      '<td style="padding:6px;direction:ltr">' + u.email + '</td>' +
+      '<td style="padding:6px;text-align:center"><span style="font-size:10px;background:' + (u.role==='admin'?'rgba(245,197,24,.2)':'var(--bg3)') + ';color:' + (u.role==='admin'?'var(--acc)':'var(--mt)') + ';padding:2px 7px;border-radius:10px">' + u.role + '</span></td>' +
+      '<td style="padding:6px;text-align:center">' + (u.has_key ? '✅' : '❌') + '</td>' +
+      '<td style="padding:6px;text-align:center"><button onclick="deleteUser(' + u.id + ')" style="background:none;border:none;color:var(--er);cursor:pointer;font-size:13px">🗑</button></td>' +
+    '</tr>').join('') +
+    '</tbody></table>';
+}
+
+async function addUser() {
+  const email = document.getElementById('new-email')?.value.trim();
+  const pass  = document.getElementById('new-pass')?.value;
+  const role  = document.getElementById('new-role')?.value;
+  const msg   = document.getElementById('admin-msg');
+  if (!email || !pass) { if(msg){msg.style.color='#f87171';msg.textContent='أدخل البريد وكلمة المرور';} return; }
+  const r = await authFetch('/api/admin/users', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email,password:pass,role}) });
+  const d = await r.json();
+  if (d.ok) {
+    if(msg){msg.style.color='#4ade80';msg.textContent='✅ تمت الإضافة';}
+    document.getElementById('new-email').value='';
+    document.getElementById('new-pass').value='';
+    loadAdminPanel();
+  } else {
+    if(msg){msg.style.color='#f87171';msg.textContent=d.error;}
+  }
+}
+
+async function deleteUser(id) {
+  if (!confirm('حذف هذا المستخدم؟')) return;
+  const r = await authFetch('/api/admin/users/'+id, { method:'DELETE' });
+  const d = await r.json();
+  if (d.ok) loadAdminPanel();
+  else alert(d.error);
+}
+
+// ── Theme toggle ──────────────────────────────────────────────────────────────
+let isDark = true;
+function toggleTheme() {
+  isDark = !isDark;
+  document.body.classList.toggle('light-mode', !isDark);
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = isDark ? '🌙 سوداء' : '☀️ بيضاء';
+  localStorage.setItem('nb_theme', isDark ? 'dark' : 'light');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+(function init() {
+  // Auth check
+  if (!localStorage.getItem('eh_token')) {
+    window.location.href = '/login.html';
+    return;
+  }
+
+  // Show user badge
+  const badge = document.getElementById('user-badge');
+  if (badge) badge.textContent = '👤 ' + (localStorage.getItem('eh_email') || '');
+
+  // Load saved theme
+  const savedTheme = localStorage.getItem('nb_theme');
+  if (savedTheme === 'light') {
+    isDark = false;
+    document.body.classList.add('light-mode');
+    const btn = document.getElementById('theme-toggle');
+    if (btn) btn.textContent = '☀️ بيضاء';
+  }
+  buildSecChecks();
+  buildCrSecChecks();
+  buildAngles();
+  buildAdsAngles();
+  buildCopiesAngles();
+  buildCopyTypeChecks();
+  calcPricing();
+
+  // Ads upload drag
+  const upzAds = document.getElementById('upz-ads');
+  if (upzAds) {
+    upzAds.addEventListener('dragover', e => { e.preventDefault(); upzAds.classList.add('drag'); });
+    upzAds.addEventListener('dragleave', () => upzAds.classList.remove('drag'));
+    upzAds.addEventListener('drop', e => {
+      e.preventDefault(); upzAds.classList.remove('drag');
+      const f = e.dataTransfer.files[0];
+      if (f?.type.startsWith('image/')) {
+        const dt = new DataTransfer(); dt.items.add(f);
+        const inp = document.getElementById('finp-ads');
+        inp.files = dt.files; handleAdsFile(inp);
+      }
+    });
+  }
+  const btn = document.getElementById('bgen');
+  if (btn) btn.textContent = '⚡ ابدأ التوليد – ' + SECS.length + ' أقسام';
+
+  // Show landing page immediately
+  switchMain('landing');
+  switchInner('gen');
+
+  // Ping server
+  ping();
+  setInterval(ping, 20000);
+
+  // Stitch drop zone
+  const dz = document.getElementById('drop-zone');
+  if (dz) {
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault(); dz.classList.remove('drag');
+      const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+      addStitchFiles(files);
+    });
+  }
+
+  // Creatives drop zone
+  const upzCr = document.getElementById('upz-cr');
+  if (upzCr) {
+    upzCr.addEventListener('dragover', e => { e.preventDefault(); upzCr.classList.add('drag'); });
+    upzCr.addEventListener('dragleave', () => upzCr.classList.remove('drag'));
+    upzCr.addEventListener('drop', e => {
+      e.preventDefault(); upzCr.classList.remove('drag');
+      const f = e.dataTransfer.files[0];
+      if (f?.type.startsWith('image/')) {
+        const dt = new DataTransfer(); dt.items.add(f);
+        const inp = document.getElementById('finp-cr');
+        inp.files = dt.files; handleCreativeFile(inp);
+      }
+    });
+  }
+
+  // Main upload drop zone
+  const upz = document.getElementById('upz');
+  if (upz) {
+    upz.addEventListener('dragover', e => { e.preventDefault(); upz.classList.add('drag'); });
+    upz.addEventListener('dragleave', () => upz.classList.remove('drag'));
+    upz.addEventListener('drop', e => {
+      e.preventDefault(); upz.classList.remove('drag');
+      const f = e.dataTransfer.files[0];
+      if (f?.type.startsWith('image/')) {
+        const dt = new DataTransfer(); dt.items.add(f);
+        const inp = document.getElementById('finp');
+        inp.files = dt.files; handleFile(inp);
+      }
+    });
+  }
+
+  // API key enter
+  const kinp = document.getElementById('kinp');
+  if (kinp) kinp.addEventListener('keydown', e => { if (e.key === 'Enter') saveKey(); });
+})();
+
+// ── Stitch page ───────────────────────────────────────────────────────────────
+let stitchFiles = [];
+let dragSrcIdx = null;
+
+const dropZone = document.getElementById('drop-zone');
+if (dropZone) {
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault(); dropZone.classList.remove('drag');
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    addStitchFiles(files);
+  });
+}
+
+function handleStitchFiles(inp) {
+  addStitchFiles(Array.from(inp.files));
+  inp.value = '';
+}
+
+function addStitchFiles(files) {
+  files.forEach(f => {
+    if (!stitchFiles.find(x => x.name === f.name && x.size === f.size)) {
+      stitchFiles.push(f);
+    }
+  });
+  renderSortable();
+}
+
+function renderSortable() {
+  const area = document.getElementById('stitch-preview-area');
+  const list = document.getElementById('sortable-list');
+  if (!stitchFiles.length) { area.style.display = 'none'; return; }
+  area.style.display = 'block';
+  list.innerHTML = '';
+  stitchFiles.forEach((f, i) => {
+    const url = URL.createObjectURL(f);
+    const item = document.createElement('div');
+    item.className = 'sort-item';
+    item.draggable = true;
+    item.dataset.idx = i;
+    item.innerHTML = `
+      <div class="sort-handle">⠿</div>
+      <div class="sort-num">${i + 1}</div>
+      <img class="sort-thumb" src="${url}" alt="">
+      <div class="sort-info">
+        <div class="sort-name">${f.name}</div>
+        <div class="sort-size">${(f.size/1024).toFixed(0)} KB</div>
+      </div>
+      <button class="sort-del" onclick="removeStitch(${i})">✕</button>`;
+    item.addEventListener('dragstart', e => { dragSrcIdx = i; item.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+    item.addEventListener('dragend', () => { item.classList.remove('dragging'); document.querySelectorAll('.sort-item').forEach(el => el.classList.remove('drag-over')); });
+    item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
+    item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      item.classList.remove('drag-over');
+      if (dragSrcIdx === null || dragSrcIdx === i) return;
+      const moved = stitchFiles.splice(dragSrcIdx, 1)[0];
+      stitchFiles.splice(i, 0, moved);
+      dragSrcIdx = null;
+      renderSortable();
+    });
+    list.appendChild(item);
+  });
+}
+
+function removeStitch(idx) {
+  stitchFiles.splice(idx, 1);
+  renderSortable();
+}
+
+async function stitchImages() {
+  if (stitchFiles.length < 2) { showToast('⚠️ خاصك على الأقل صورتين'); return; }
+  const btn = document.getElementById('stitch-btn');
+  const prog = document.getElementById('stitch-progress');
+  const pgb = document.getElementById('stitch-pgb');
+  const pgl = document.getElementById('stitch-pgl');
+  btn.disabled = true;
+  prog.style.display = 'block';
+
+  try {
+    // Load all images
+    pgl.textContent = 'جاري تحميل الصور...';
+    const imgs = await Promise.all(stitchFiles.map((f, i) => new Promise((res, rej) => {
+      const img = new Image();
+      img.onload = () => res(img);
+      img.onerror = rej;
+      img.src = URL.createObjectURL(f);
+    })));
+    pgb.style.width = '30%';
+
+    pgl.textContent = 'جاري حساب الأبعاد...';
+    const totalW = Math.max(...imgs.map(i => i.naturalWidth));
+    const totalH = imgs.reduce((s, i) => s + Math.round(i.naturalHeight * (totalW / i.naturalWidth)), 0);
+
+    // Create canvas
+    const canvas = document.createElement('canvas');
+    canvas.width = totalW;
+    canvas.height = totalH;
+    const ctx = canvas.getContext('2d');
+    pgb.style.width = '50%';
+
+    // Draw images
+    let y = 0;
+    for (let i = 0; i < imgs.length; i++) {
+      pgl.textContent = `جاري الدمج ${i+1}/${imgs.length}...`;
+      const img = imgs[i];
+      const scaledH = Math.round(img.naturalHeight * (totalW / img.naturalWidth));
+      ctx.drawImage(img, 0, y, totalW, scaledH);
+      y += scaledH;
+      pgb.style.width = (50 + Math.round((i+1)/imgs.length * 40)) + '%';
+      await new Promise(r => setTimeout(r, 10)); // yield to UI
+    }
+
+    pgb.style.width = '95%';
+    pgl.textContent = 'جاري ضغط الصورة...';
+    await new Promise(r => setTimeout(r, 50));
+
+    // Export as JPEG with quality 0.82 for smaller file size
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'landing-page-' + Date.now() + '.jpg';
+      a.click();
+      URL.revokeObjectURL(url);
+      pgb.style.width = '100%';
+      pgl.textContent = `✅ تم! ${(blob.size/1024/1024).toFixed(1)} MB`;
+      pgl.style.color = '#4ade80';
+      btn.disabled = false;
+      showToast('✅ تم تحميل الصورة!');
+    }, 'image/jpeg', 0.82);
+
+  } catch(err) {
+    pgl.textContent = '❌ خطأ: ' + err.message;
+    pgl.style.color = '#f87171';
+    btn.disabled = false;
+  }
+}
+
+
+</script>
+<script>
+// ── Ecom Expert Chatbot ───────────────────────────────────────────────────────
+let expertHistory = [];
+
+</script>
+<script>
+
+</script>
+</body>
+</html>

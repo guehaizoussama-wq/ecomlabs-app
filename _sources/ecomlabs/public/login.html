@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcomHelper – تسجيل الدخول</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f0f13;color:#e8e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.card{background:#1a1a22;border:1px solid #2e2e3e;border-radius:16px;padding:40px;width:100%;max-width:400px;margin:20px}
+.logo{font-size:28px;font-weight:700;background:linear-gradient(135deg,#f5c518,#ff6b35);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;margin-bottom:6px}
+.sub{font-size:12px;color:#8888aa;text-align:center;margin-bottom:32px}
+label{display:block;font-size:12px;color:#8888aa;margin-bottom:6px}
+input{width:100%;background:#22222e;border:1px solid #2e2e3e;border-radius:8px;color:#e8e8f0;padding:11px 14px;font-size:14px;outline:none;direction:ltr;transition:border-color .2s;margin-bottom:16px}
+input:focus{border-color:#f5c518}
+.btn{width:100%;padding:13px;background:linear-gradient(135deg,#f5c518,#ff6b35);color:#000;font-weight:700;font-size:15px;border:none;border-radius:8px;cursor:pointer;transition:opacity .2s}
+.btn:hover{opacity:.88}
+.btn:disabled{opacity:.4;cursor:wait}
+.err{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);border-radius:8px;padding:10px 14px;font-size:13px;color:#f87171;margin-top:12px;display:none;text-align:center}
+.err.on{display:block}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">EcomHelper</div>
+  <div class="sub">أداة التسويق الرقمي</div>
+  <label>البريد الإلكتروني</label>
+  <input type="email" id="email" placeholder="admin@admin.com" onkeydown="if(event.key==='Enter')login()">
+  <label>كلمة المرور</label>
+  <input type="password" id="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
+  <button class="btn" id="btn" onclick="login()">تسجيل الدخول</button>
+  <div class="err" id="err"></div>
+</div>
+<script>
+if (localStorage.getItem('eh_token')) window.location.href = '/';
+async function login() {
+  const email = document.getElementById('email').value.trim();
+  const pass  = document.getElementById('password').value;
+  const btn   = document.getElementById('btn');
+  const err   = document.getElementById('err');
+  if (!email || !pass) { showErr('أدخل البريد وكلمة المرور'); return; }
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    const r = await fetch('/api/login', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, password: pass })
+    });
+    const d = await r.json();
+    if (d.ok) {
+      localStorage.setItem('eh_token', d.token);
+      localStorage.setItem('eh_role', d.role);
+      localStorage.setItem('eh_email', d.email);
+      localStorage.setItem('eh_pass', password);
+      window.location.href = '/';
+    } else {
+      showErr(d.error || 'خطأ في تسجيل الدخول');
+    }
+  } catch(e) { showErr('تعذر الاتصال بالسيرفر'); }
+  btn.disabled = false; btn.textContent = 'تسجيل الدخول';
+}
+function showErr(msg) {
+  const e = document.getElementById('err');
+  e.textContent = msg; e.classList.add('on');
+}
+</script>
+</body>
+</html>

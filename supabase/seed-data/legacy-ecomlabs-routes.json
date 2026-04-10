@@ -1,0 +1,66 @@
+[
+  {
+    "method": "GET",
+    "route": "/api/debug"
+  },
+  {
+    "method": "GET",
+    "route": "/api/version"
+  },
+  {
+    "method": "GET",
+    "route": "/api/health"
+  },
+  {
+    "method": "POST",
+    "route": "/api/login"
+  },
+  {
+    "method": "POST",
+    "route": "/api/logout"
+  },
+  {
+    "method": "GET",
+    "route": "/api/me"
+  },
+  {
+    "method": "POST",
+    "route": "/api/set-key"
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/users"
+  },
+  {
+    "method": "POST",
+    "route": "/api/admin/users"
+  },
+  {
+    "method": "POST",
+    "route": "/api/analyze"
+  },
+  {
+    "method": "POST",
+    "route": "/api/generate-section"
+  },
+  {
+    "method": "POST",
+    "route": "/api/generate-creatives"
+  },
+  {
+    "method": "POST",
+    "route": "/api/generate-ads"
+  },
+  {
+    "method": "POST",
+    "route": "/api/generate-copies"
+  },
+  {
+    "method": "POST",
+    "route": "/api/expert-chat"
+  },
+  {
+    "method": "POST",
+    "route": "/api/find-products"
+  }
+]

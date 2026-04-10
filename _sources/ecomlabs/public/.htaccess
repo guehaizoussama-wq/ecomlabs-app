@@ -1,0 +1,2 @@
+# Redirect all to Node app via Passenger/Proxy
+Options -MultiViews

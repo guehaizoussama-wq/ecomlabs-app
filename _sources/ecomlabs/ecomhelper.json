@@ -1,0 +1,117 @@
+{
+  "users": [
+    {
+      "id": "mnaxvs01iu6w6z",
+      "email": "admin@admin.com",
+      "password": "3b612c75a7b5048a435fb6ec81e52ff92d6d795a8b5a9c17070f6a63c97a53b2",
+      "role": "admin",
+      "api_key": "AIzaSyAcmO2ftBhz-MK79lJl6oUBrxebBbTSog0",
+      "created": "2026-03-28T23:06:15.553Z"
+    },
+    {
+      "id": "mnayea4f0o68gd",
+      "email": "adelboulkour2@gmail.com",
+      "password": "ed7866e7df8119700f78cc81799d1e6391abef1856c7c37e9cec5d821e87dfc3",
+      "role": "user",
+      "api_key": "",
+      "created": "2026-03-28T23:20:38.848Z"
+    },
+    {
+      "id": "mnaygxtxats4wc",
+      "email": "test@test.com",
+      "password": "ecd71870d1963316a97e3ac3408c9835ad8cf0f3c1bc703527c30265534f75ae",
+      "role": "user",
+      "api_key": "AIzaSyDMW_pwYswjwBMsjRFAffUmaCi3UDFGqtw",
+      "created": "2026-03-28T23:22:42.886Z"
+    },
+    {
+      "id": "mnb0vw8jqi326s",
+      "email": "zinou@gmail.com",
+      "password": "8efeea7679c13f67d969130254e8c8a0d4874bfb945c2d89023378c9cba94072",
+      "role": "user",
+      "api_key": "AIzaSyAcmO2ftBhz-MK79lJl6oUBrxebBbTSog0",
+      "created": "2026-03-29T00:30:19.891Z"
+    },
+    {
+      "id": "mnb7gmfzye1vtl",
+      "email": "adelboulkour3@gmail.com",
+      "password": "d99391a4f781289d32026eda22653b634a93e8bdb73c3fce652dbdc5c1bab139",
+      "role": "user",
+      "api_key": "AIzaSyBjQmMIVp5g8H2hl48rXdXV9oqRyfpr1pY",
+      "created": "2026-03-29T03:34:24.671Z"
+    },
+    {
+      "id": "mnc3fwyxizcsct",
+      "email": "memes@memes.com",
+      "password": "f64b98c84c19fc0d8e94dbfe2880608d44e82848f727f0d0fb4ad7cde56c0a45",
+      "role": "user",
+      "api_key": "",
+      "created": "2026-03-29T18:29:39.369Z"
+    },
+    {
+      "id": "mnkdiwnitbv3u9",
+      "email": "endavia.life@gmail.com",
+      "password": "834128c0b5654ea81ae2121a75ab810da9dd21457179910c1cd7219fbec461ba",
+      "role": "user",
+      "api_key": "AIzaSyD2BMVEY6cN6L8I3VmibqN-t7Tae4dsTxQ",
+      "created": "2026-04-04T13:34:04.494Z"
+    }
+  ],
+  "sessions": [
+    {
+      "token": "265ed1e14f6788a3a529334a88eabc467762898d0af14c61b0667c2a8f8d6edb",
+      "user_id": "mnaxvs01iu6w6z",
+      "created": "2026-03-29T00:08:09.244Z"
+    },
+    {
+      "token": "bdacffed1eaf56f2284c3c01b50646ab6291e2e422a991c848f8d2997beb1171",
+      "user_id": "mnaxvs01iu6w6z",
+      "created": "2026-03-29T00:16:54.753Z"
+    },
+    {
+      "token": "588d09fe2a085784baa18b7a11a00f9e60d453f2dae672fd1aded39fb80de6fe",
+      "user_id": "mnaxvs01iu6w6z",
+      "created": "2026-03-29T00:24:19.938Z"
+    },
+    {
+      "token": "45dc15e7419d17c3e4b49810674306c087608ae748339f8c083c4d1b0861d63c",
+      "user_id": "mnaxvs01iu6w6z",
+      "created": "2026-03-29T03:42:05.982Z"
+    },
+    {
+      "token": "1ebe2ef00b180e646b4f618f9ae40b4014fe71161962b4ac47e4c4c4712d594c",
+      "user_id": "mnb7gmfzye1vtl",
+      "created": "2026-03-29T03:54:41.567Z"
+    },
+    {
+      "token": "586ee3c2c2c0f03bb6deee05e6fb0dfb7d60724773605bdbae4183c577c3e4b1",
+      "user_id": "mnb7gmfzye1vtl",
+      "created": "2026-03-29T18:28:42.070Z"
+    },
+    {
+      "token": "5bf930b7c18b12273260b78cef4e5951db539181dac793925927f2a794814415",
+      "user_id": "mnc3fwyxizcsct",
+      "created": "2026-03-29T18:32:58.386Z"
+    },
+    {
+      "token": "97381444f533f47f18e18cfe0ff803e6ed8632cba026ebe6e0c1394fcdedcfa3",
+      "user_id": "mnaxvs01iu6w6z",
+      "created": "2026-03-29T21:16:42.596Z"
+    },
+    {
+      "token": "1c39a105f1dcfdfebfd0693f3e3bdc4922a24d88197296ddddfb9ccb54d60a28",
+      "user_id": "mnaxvs01iu6w6z",
+      "created": "2026-04-03T17:04:54.450Z"
+    },
+    {
+      "token": "64756e6963465de5c376e46765df31fab43cce71d2ade66e42a7d188fe37cb3b",
+      "user_id": "mnb7gmfzye1vtl",
+      "created": "2026-04-03T19:48:01.767Z"
+    },
+    {
+      "token": "0a6f0586d0a6f2ef06ffcdf9408ef9df77665b79b467d9d549a9c4538fc6063c",
+      "user_id": "mnkdiwnitbv3u9",
+      "created": "2026-04-04T14:16:55.495Z"
+    }
+  ]
+}

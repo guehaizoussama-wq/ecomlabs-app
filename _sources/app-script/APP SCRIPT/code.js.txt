@@ -1,0 +1,2200 @@
+
+// === ✅ Auto-correction functions for Wilayas and Communes ===
+
+const WILAYA_LIST = [
+  { wilaya_code: 1, wilaya_name_ascii: "Adrar" },
+  { wilaya_code: 44, wilaya_name_ascii: "Aïn Defla" },
+  { wilaya_code: 46, wilaya_name_ascii: "Aïn Témouchent" },
+  { wilaya_code: 16, wilaya_name_ascii: "Alger" },
+  { wilaya_code: 23, wilaya_name_ascii: "Annaba" },
+  { wilaya_code: 5, wilaya_name_ascii: "Batna" },
+  { wilaya_code: 8, wilaya_name_ascii: "Béchar" },
+  { wilaya_code: 6, wilaya_name_ascii: "Béjaïa" },
+  { wilaya_code: 52, wilaya_name_ascii: "Béni Abbès" },
+  { wilaya_code: 7, wilaya_name_ascii: "Biskra" },
+  { wilaya_code: 9, wilaya_name_ascii: "Blida" },
+  { wilaya_code: 50, wilaya_name_ascii: "Bordj Badji Mokhtar" },
+  { wilaya_code: 34, wilaya_name_ascii: "Bordj Bou Arreridj" },
+  { wilaya_code: 10, wilaya_name_ascii: "Bouira" },
+  { wilaya_code: 35, wilaya_name_ascii: "Boumerdès" },
+  { wilaya_code: 2, wilaya_name_ascii: "Chlef" },
+  { wilaya_code: 25, wilaya_name_ascii: "Constantine" },
+  { wilaya_code: 56, wilaya_name_ascii: "Djanet" },
+  { wilaya_code: 17, wilaya_name_ascii: "Djelfa" },
+  { wilaya_code: 32, wilaya_name_ascii: "El Bayadh" },
+  { wilaya_code: 57, wilaya_name_ascii: "El M'Ghair" },
+  { wilaya_code: 58, wilaya_name_ascii: "El Menia" },
+  { wilaya_code: 39, wilaya_name_ascii: "El Oued" },
+  { wilaya_code: 36, wilaya_name_ascii: "El Tarf" },
+  { wilaya_code: 47, wilaya_name_ascii: "Ghardaïa" },
+  { wilaya_code: 24, wilaya_name_ascii: "Guelma" },
+  { wilaya_code: 33, wilaya_name_ascii: "Illizi" },
+  { wilaya_code: 54, wilaya_name_ascii: "In Guezzam" },
+  { wilaya_code: 53, wilaya_name_ascii: "In Salah" },
+  { wilaya_code: 18, wilaya_name_ascii: "Jijel" },
+  { wilaya_code: 40, wilaya_name_ascii: "Khenchela" },
+  { wilaya_code: 3, wilaya_name_ascii: "Laghouat" },
+  { wilaya_code: 28, wilaya_name_ascii: "M'Sila" },
+  { wilaya_code: 29, wilaya_name_ascii: "Mascara" },
+  { wilaya_code: 26, wilaya_name_ascii: "Médéa" },
+  { wilaya_code: 43, wilaya_name_ascii: "Mila" },
+  { wilaya_code: 27, wilaya_name_ascii: "Mostaganem" },
+  { wilaya_code: 45, wilaya_name_ascii: "Naâma" },
+  { wilaya_code: 31, wilaya_name_ascii: "Oran" },
+  { wilaya_code: 30, wilaya_name_ascii: "Ouargla" },
+  { wilaya_code: 51, wilaya_name_ascii: "Ouled Djellal" },
+  { wilaya_code: 4, wilaya_name_ascii: "Oum El Bouaghi" },
+  { wilaya_code: 48, wilaya_name_ascii: "Relizane" },
+  { wilaya_code: 20, wilaya_name_ascii: "Saïda" },
+  { wilaya_code: 19, wilaya_name_ascii: "Sétif" },
+  { wilaya_code: 22, wilaya_name_ascii: "Sidi Bel Abbès" },
+  { wilaya_code: 21, wilaya_name_ascii: "Skikda" },
+  { wilaya_code: 41, wilaya_name_ascii: "Souk Ahras" },
+  { wilaya_code: 11, wilaya_name_ascii: "Tamanrasset" },
+  { wilaya_code: 12, wilaya_name_ascii: "Tébessa" },
+  { wilaya_code: 14, wilaya_name_ascii: "Tiaret" },
+  { wilaya_code: 49, wilaya_name_ascii: "Timimoun" },
+  { wilaya_code: 37, wilaya_name_ascii: "Tindouf" },
+  { wilaya_code: 42, wilaya_name_ascii: "Tipaza" },
+  { wilaya_code: 38, wilaya_name_ascii: "Tissemsilt" },
+  { wilaya_code: 15, wilaya_name_ascii: "Tizi Ouzou" },
+  { wilaya_code: 13, wilaya_name_ascii: "Tlemcen" },
+  { wilaya_code: 55, wilaya_name_ascii: "Touggourt" }
+];
+
+
+function levenshtein(a, b) {
+  const matrix = Array.from({length: a.length+1}, () => []);
+  for (let i=0; i<=a.length; i++) matrix[i][0] = i;
+  for (let j=0; j<=b.length; j++) matrix[0][j] = j;
+  for (let i=1; i<=a.length; i++) {
+    for (let j=1; j<=b.length; j++) {
+      if (a[i-1].toLowerCase() === b[j-1].toLowerCase()) {
+        matrix[i][j] = matrix[i-1][j-1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i-1][j] + 1,
+          matrix[i][j-1] + 1,
+          matrix[i-1][j-1] + 1
+        );
+      }
+    }
+  }
+  return matrix[a.length][b.length];
+}
+
+function similarity(a, b) {
+  const dist = levenshtein(a, b);
+  return 1 - dist / Math.max(a.length, b.length);
+}
+
+function correctWilayaName(input) {
+  let best = null, bestScore = -1;
+  WILAYA_LIST.forEach(w => {
+    const score = similarity(input, w.wilaya_name_ascii);
+    if (score > bestScore) {
+      bestScore = score;
+      best = w;
+    }
+  });
+  return best;
+}
+
+// Stub for communes (should be linked to COMMUNES_LIST)
+function correctCommuneName(input, wilaya_code) {
+  if (typeof COMMUNES_LIST === 'undefined') return input;
+  let best = null, bestScore = -1;
+  COMMUNES_LIST.filter(c => Number(c.wilaya_code) === Number(wilaya_code))
+    .forEach(c => {
+      const score = similarity(input, c.commune_name_ascii);
+      if (score > bestScore) {
+        bestScore = score;
+        best = c.commune_name_ascii;
+      }
+    });
+  return best || input;
+}
+
+
+function showProperties() {
+  // Script properties
+  var scriptProps = PropertiesService.getScriptProperties().getProperties();
+  Logger.log("Script Properties: " + JSON.stringify(scriptProps));
+
+  // User properties
+  var userProps = PropertiesService.getUserProperties().getProperties();
+  Logger.log("User Properties: " + JSON.stringify(userProps));
+
+  // Document properties
+  var docProps = PropertiesService.getDocumentProperties().getProperties();
+  Logger.log("Document Properties: " + JSON.stringify(docProps));
+}
+function onOpen() {
+  SpreadsheetApp.getUi().createMenu('🚚 Delivery')
+    .addItem('Setup API Credentials', 'showSetupForm')
+    .addToUi();
+
+  const email = Session.getActiveUser().getEmail().toLowerCase().trim();
+  if (!isEmailAuthorized(email)) {
+    clearCredentials();
+    deleteEditTriggers();
+  }
+ 
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  PropertiesService.getDocumentProperties().setProperty("headerRow", JSON.stringify(headerValues));
+
+}
+function showSetupForm() {
+  const html = HtmlService.createHtmlOutputFromFile('SetupForm')
+    .setWidth(400)
+    .setHeight(500);
+  SpreadsheetApp.getUi().showModalDialog(html, 'Setup Delivery Platform');
+}
+
+function isEmailAuthorized(email) {
+  // ✅ تخطي جميع عمليات التحقق والعودة مباشرة بـ true
+  return true;
+}
+
+function clearCredentials() {
+  PropertiesService.getDocumentProperties().deleteAllProperties();
+  PropertiesService.getUserProperties().deleteAllProperties();
+  PropertiesService.getScriptProperties().deleteAllProperties();
+}
+function deleteEditTriggers() {
+  const triggers = ScriptApp.getProjectTriggers();
+  for (const t of triggers) {
+    if (t.getHandlerFunction() === 'onEdit') {
+      ScriptApp.deleteTrigger(t);
+    }
+  }
+}
+
+function storeCredentials(email, provider, token, key) {
+  if (!isEmailAuthorized(email)) {
+    throw new Error("❌ Access Denied: Your email is not authorized.");
+  }
+  Logger.log(Session.getActiveUser().getEmail());
+  const props = PropertiesService.getDocumentProperties();
+  props.setProperty("EMAIL", email);
+  props.setProperty('DELIVERY_PROVIDER', provider);
+  props.setProperty('API_TOKEN', token);
+  props.setProperty('API_KEY', key || '');
+  deleteEditTriggers();
+  ScriptApp.newTrigger('onEdit')
+    .forSpreadsheet(SpreadsheetApp.getActiveSpreadsheet())
+    .onEdit()
+    .create();
+  return "✅ Setup complete. You're good to go!";
+}
+
+function onEdit(e) {
+  if (!e) return;
+  const sheet = e.range.getSheet();
+  const col = e.range.getColumn();
+  const row = e.range.getRow();
+  const val = e.value?.trim().toUpperCase();
+  if (col !== 17 || val !== "CONFIRM") return;
+  const email = Session.getActiveUser().getEmail().toLowerCase().trim();
+  if (!isEmailAuthorized(email)) {
+    return;
+  }
+  const props = PropertiesService.getDocumentProperties();
+  const provider = props.getProperty("DELIVERY_PROVIDER");
+  if (provider === "DHD") handleDHD(row, sheet);
+  else if (provider === "ANDERSON") handleANDERSON(row, sheet);
+  else if (provider === "NOEST") handleNOEST(row, sheet);
+  else if (provider === "AREEX") handleAREEX(row, sheet);
+  else if (provider === "OVRED") handleOVRED(row, sheet);
+  else if (provider === "WORLDEXPRESS") handleWORLDEXPRESS(row, sheet);
+  else if (provider === "48HR") handle48HR(row, sheet);
+  else if (provider === "ELOGISTIA") handleELOGISTIA(row, sheet);
+  else if (provider === "NAVEX") handleNAVEX(row, sheet);
+  else if (provider === "ZR") handleZR(row, sheet);
+  else if (provider === "ECOM") handleECOM(row, sheet);
+  else if (provider === "COLIRELI") handleCOLIRELI(row, sheet);
+  else if (provider === "YALIDINE") handleYALIDINE(row, sheet);
+  else if (provider === "GUEPEX") handleGUEPEX(row, sheet);
+  else if (provider === "SALVA") handleSALVA(row, sheet);
+  else sheet.getRange(row, 18).setValue("❌ Unknown provider. Please run setup again.");
+     try {
+    const suiviSheet = e.source.getSheetByName("SUIVI");
+    if (suiviSheet) {
+      const rowData = sheet.getRange(row, 1, 1, sheet.getLastColumn()).getValues()[0];
+      suiviSheet.appendRow(rowData);
+    } else {
+      Logger.log("⚠️ No sheet named 'SUIVI' found.");
+    }
+  } catch (err) {
+    Logger.log("❌ Failed to append to SUIVI sheet: " + err);
+  }
+}
+
+// === 🚚 DHD Livraison Logic ===
+function handleDHD(row, sheet) { 
+  const get = col => sheet.getRange(row, col).getValue();
+  const reference = get(2), nom_client = get(3), telephone = get(4);
+  let code_wilaya = get(5), wilaya = get(6), commune = get(7),quantite = get(11), adresse = get(8);
+  const produit = get(9), fragileText = get(10), montant = get(14);
+  const stopDeskText = get(15), remarque = get(16);
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+
+try {
+    const previous = get(18);
+    if (previous) {
+      const json = JSON.parse(previous);
+      const tracking = Object.keys(json?.data || {})[0];
+      if (tracking) {
+        const deleteUrl = `https://platform.dhd-dz.com/api/v1/delete/order?tracking=${tracking}`;
+        UrlFetchApp.fetch(deleteUrl, {
+          method: "delete",
+          headers: { "Authorization": `Bearer ${token}` },
+          muteHttpExceptions: true
+        });
+      }
+    }
+  } catch (err) {
+    Logger.log("❌ Failed to delete Previous order: " + err);
+  }
+
+const match = findMatchWithTolerance(wilaya, commune);
+if (match) {
+  wilaya = match.wilaya_name_ascii;
+  commune = match.commune_name_ascii;
+  code_wilaya = match.wilaya_code;
+  sheet.getRange(row, 6).setValue(wilaya);
+  sheet.getRange(row, 7).setValue(commune);
+}
+
+  if (code_wilaya) code_wilaya = code_wilaya.toString().trim().replace(/^0+/, "");
+
+  let stop_desk = 0;
+  if (typeof stopDeskText === "string") {
+    const lower = stopDeskText.trim().toLowerCase();
+    if (lower === "stop desk" || lower === "1") stop_desk = 1;
+  }
+
+  let fragile = 0;
+  if (typeof fragileText === "string" && fragileText.trim().toLowerCase() === "fragile") {
+    fragile = 1;
+  }
+
+  // Format commune
+  commune = commune ? commune.toString().trim().toLowerCase().replace(/\b\w/g, l => l.toUpperCase()) : "";
+
+  // === ✅ Validate stop desk support
+  if (stop_desk === 1 && commune) {
+    const apiUrl = "https://platform.dhd-dz.com/api/v1/get/communes";
+    const options = {
+      method: "get",
+      headers: { "Authorization": `Bearer ${token}` },
+      muteHttpExceptions: true
+    };
+    let communes = [];
+    try {
+      const res = UrlFetchApp.fetch(apiUrl, options);
+      const json = JSON.parse(res.getContentText());
+      communes = Object.values(json);
+    } catch (e) {
+      Logger.log("Failed to fetch commune data: " + e);
+    }
+
+    if (communes.length > 0) {
+      const match = communes.find(c => c.nom.toLowerCase() === commune.toLowerCase());
+      if (match && match.has_stop_desk === 0) {
+        stop_desk = 0;
+      }
+    }
+  }
+
+  if (!adresse) adresse = commune;
+  if (!quantite) {
+  quantite = 1;
+}
+  const payload = {
+    "orders": {
+      "0": {
+        reference, nom_client, telephone, "telephone_2": "",
+        adresse, "code_postal": "", commune, code_wilaya,
+        montant, remarque, produit, "stock": 0, quantite,
+        "produit_a_recuperer": "", "boutique": "", "type": "1",
+        stop_desk, "weight": "0", fragile
+      }
+    }
+  };
+
+  sendToDHD(payload, row, sheet);
+}
+
+
+function sendToDHD(payload, row, sheet) {
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+  const apiUrl = "https://platform.dhd-dz.com/api/v1/create/orders";
+
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    headers: { "Authorization": `Bearer ${token}` },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+
+  try {
+    const res = UrlFetchApp.fetch(apiUrl, options);
+    const resText = res.getContentText();
+    const json = JSON.parse(resText);
+
+    // ✅ Extract tracking from the correct structure
+    let tracking;
+    if (json && json.results) {
+      const firstKey = Object.keys(json.results)[0];
+      tracking = json.results[firstKey]?.tracking;
+    }
+
+    if (tracking) {
+const statusUrl = `https://platform.dhd-dz.com/api/v1/get/orders/status?api_token=${token}&trackings=${tracking}&status=all`;
+      const statusRes = UrlFetchApp.fetch(statusUrl, {
+        method: "get",
+        muteHttpExceptions: true
+      });
+
+      const statusText = statusRes.getContentText();
+      sheet.getRange(row, 18).setValue(`${statusText}`);
+
+    } else {
+      sheet.getRange(row, 18).setValue(`DHD: ❌ no tracking found. Resp: ${resText}`);
+    }
+
+  } catch (err) {
+    sheet.getRange(row, 18).setValue(`❌ DHD ERROR: ${err}`);
+  }
+}
+
+// === 🚚 ANDERSON Livraison Logic ===
+function handleANDERSON(row, sheet) { 
+  const get = col => sheet.getRange(row, col).getValue();
+  const reference = get(2), nom_client = get(3), telephone = get(4);
+  let code_wilaya = get(5), wilaya = get(6), commune = get(7), adresse = get(8);
+  const produit = get(9), fragileText = get(10), quantite = get(11), montant = get(14);
+  const stopDeskText = get(15), remarque = get(16);
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+
+// delete old order if  exists
+try {
+    const previous = get(18);
+    if (previous) {
+      const json = JSON.parse(previous);
+      const tracking = Object.keys(json?.data || {})[0];
+      if (tracking) {
+        const deleteUrl = `https://anderson-ecommerce.ecotrack.dz/api/v1/delete/order?tracking=${tracking}`;
+        UrlFetchApp.fetch(deleteUrl, {
+          method: "delete",
+          headers: { "Authorization": `Bearer ${token}` },
+          muteHttpExceptions: true
+        });
+      }
+    }
+  } catch (err) {
+    Logger.log("❌ Failed to delete Previous order: " + err);
+  }
+const match = findMatchWithTolerance(wilaya, commune);
+if (match) {
+  wilaya = match.wilaya_name_ascii;
+  commune = match.commune_name_ascii;
+  code_wilaya = match.wilaya_code;
+  sheet.getRange(row, 6).setValue(wilaya);
+  sheet.getRange(row, 7).setValue(commune);
+}
+
+  if (code_wilaya) code_wilaya = code_wilaya.toString().trim().replace(/^0+/, "");
+
+  let stop_desk = 0;
+  if (typeof stopDeskText === "string") {
+    const lower = stopDeskText.trim().toLowerCase();
+    if (lower === "stop desk" || lower === "1") stop_desk = 1;
+  }
+
+  let fragile = 0;
+  if (typeof fragileText === "string" && fragileText.trim().toLowerCase() === "fragile") {
+    fragile = 1;
+  }
+
+  // Format commune
+  commune = commune ? commune.toString().trim().toLowerCase().replace(/\b\w/g, l => l.toUpperCase()) : "";
+
+  // === ✅ Validate stop desk support
+  if (stop_desk === 1 && commune) {
+    const apiUrl = "https://anderson-ecommerce.ecotrack.dz/api/v1/get/communes";
+    const options = {
+      method: "get",
+      headers: { "Authorization": `Bearer ${token}` },
+      muteHttpExceptions: true
+    };
+    let communes = [];
+    try {
+      const res = UrlFetchApp.fetch(apiUrl, options);
+      const json = JSON.parse(res.getContentText());
+      communes = Object.values(json);
+    } catch (e) {
+      Logger.log("Failed to fetch commune data: " + e);
+    }
+
+    if (communes.length > 0) {
+      const match = communes.find(c => c.nom.toLowerCase() === commune.toLowerCase());
+      if (match && match.has_stop_desk === 0) {
+        stop_desk = 0;
+      }
+    }
+  }
+
+  if (!adresse) adresse = commune;
+
+  const payload = {
+    "orders": {
+      "0": {
+        reference, nom_client, telephone, "telephone_2": "",
+        adresse, "code_postal": "", commune, code_wilaya,
+        montant, remarque, produit, "stock": 0, quantite,
+        "produit_a_recuperer": "", "boutique": "", "type": "1",
+        stop_desk, "weight": "0", fragile
+      }
+    }
+  };
+
+  sendToANDERSON(payload, row, sheet);
+}
+
+
+function sendToANDERSON(payload, row, sheet) {
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+  const apiUrl = "https://anderson-ecommerce.ecotrack.dz/api/v1/create/orders";
+
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    headers: { "Authorization": `Bearer ${token}` },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+
+  try {
+    const res = UrlFetchApp.fetch(apiUrl, options);
+    const resText = res.getContentText();
+    const json = JSON.parse(resText);
+
+    // ✅ Extract tracking from the correct structure
+    let tracking;
+    if (json && json.results) {
+      const firstKey = Object.keys(json.results)[0];
+      tracking = json.results[firstKey]?.tracking;
+    }
+
+    if (tracking) {
+const statusUrl = `https://anderson-ecommerce.ecotrack.dz/api/v1/get/orders/status?api_token=${token}&trackings=${tracking}&status=all`;
+      const statusRes = UrlFetchApp.fetch(statusUrl, {
+        method: "get",
+        muteHttpExceptions: true
+      });
+
+      const statusText = statusRes.getContentText();
+      sheet.getRange(row, 18).setValue(`${statusText}`);
+
+    } else {
+      sheet.getRange(row, 18).setValue(` ANDERSON: ❌ no tracking found. Resp: ${resText}`);
+    }
+
+  } catch (err) {
+    sheet.getRange(row, 18).setValue(`❌ ANDERSON ERROR: ${err}`);
+  }
+}
+
+// === 🚚 NOEST Express Logic ===
+function handleNOEST(row, sheet) {
+  // Helper function to get value from a specific column in the current row.
+  const get = col => sheet.getRange(row, col).getValue();
+
+  // Retrieve order details from the specified columns in the sheet.
+  const reference = get(2);
+  const nom_client = get(3);
+  const telephone = get(4);
+  let code_wilaya = get(5);
+  let wilaya = get(6);
+  let commune = get(7);
+  let adresse = get(8);
+  const produit = get(9);
+  const fragileText = get(10);
+  let quantite = get(11); // Changed to 'let' as it will be formatted
+  const montant = get(14);
+  const stopDeskText = get(15);
+  const remarque = get(16);
+
+  // Retrieve API credentials from Document Properties.
+  const props = PropertiesService.getDocumentProperties();
+  const token = props.getProperty("API_TOKEN");
+  const key = props.getProperty("API_KEY"); // Noest also uses API_KEY (user_guid)
+
+  // --- Deletion Logic: Attempt to delete a previous order if a tracking ID is present ---
+  try {
+    const previous = get(18); // Check column R (18) for previous API response
+    if (previous) {
+      const json = JSON.parse(previous);
+      // Noest API response structure for create/order needs to be checked for tracking.
+      // Assuming a successful creation response might contain 'tracking' field directly or nested.
+      // For this example, let's assume 'tracking' might be directly in 'data' or 'response'.
+      let trackingToDelete = json.tracking || (json.data && json.data.tracking);
+
+      if (trackingToDelete) {
+        Logger.log(`Attempting to delete previous Noest order with tracking: ${trackingToDelete}`);
+        const deleteUrl = "https://app.noest-dz.com/api/public/delete/order";
+        const deletePayload = {
+          api_token: token,
+          user_guid: key,
+          tracking: trackingToDelete
+        };
+        const deleteOptions = {
+          method: "post",
+          contentType: "application/json",
+          payload: JSON.stringify(deletePayload),
+          muteHttpExceptions: true
+        };
+        UrlFetchApp.fetch(deleteUrl, deleteOptions);
+        Logger.log(`✅ Previous Noest order ${trackingToDelete} deleted successfully (or attempted).`);
+      }
+    }
+  } catch (err) {
+    Logger.log("❌ Failed to delete previous Noest order: " + err);
+    // Optionally write deletion error to a different column or append to current message
+  }
+
+const match = findMatchWithToleranceNOEST(wilaya, commune);
+if (match) {
+  wilaya = match.wilaya;           
+  commune = match.commune;        
+  code_wilaya = match.wilaya_code; 
+
+  sheet.getRange(row, 6).setValue(wilaya);
+  sheet.getRange(row, 7).setValue(commune);
+}
+
+
+
+  // Handle wilaya_id (code_wilaya). Ensure it's a string and remove leading zeros.
+  if (code_wilaya) {
+    code_wilaya = String(code_wilaya).trim().replace(/^0+/, "");
+  }
+
+  // Handle stop_desk flag
+  let stop_desk = 0;
+  if (typeof stopDeskText === "string") {
+    const lower = stopDeskText.trim().toLowerCase();
+    if (lower === "stop desk" || lower === "1") {
+      stop_desk = 1;
+    }
+  }
+
+  // Handle fragile flag (Noest payload includes 'fragile' directly)
+  let fragile = 0;
+  if (typeof fragileText === "string" && fragileText.trim().toLowerCase() === "fragile") {
+    fragile = 1;
+  }
+
+  // Format commune: Capitalize first letter of each word (if commune exists).
+  commune = commune ? String(commune).trim().toLowerCase().replace(/\b\w/g, l => l.toUpperCase()) : "";
+
+  // If adresse is empty, use commune as the address.
+  if (!adresse) {
+    adresse = commune;
+  }
+
+  // Format quantite: Ensure it's a string and append a comma if it's a single number without one.
+  if (quantite != null) {
+    quantite = String(quantite).trim();
+    if (!quantite.includes(",") && !quantite.endsWith(",")) {
+      quantite = quantite + ",";
+    }
+  } else {
+    quantite = "1,"; // Default to "1," if null
+  }
+  const station_code = getNoestStationCode(wilaya, commune);
+  // --- Construct the Payload for Noest Create Order API ---
+  const noestPayload = {
+    api_token: token,
+    user_guid: key, // Noest uses this as the API_KEY
+    reference: reference,
+    client: nom_client,
+    phone: telephone,
+    phone_2: "", // Noest payload has phone_2
+    adresse: adresse,
+    wilaya_id: code_wilaya, // Noest uses wilaya_id
+    commune: commune,
+    montant: montant,
+    remarque: remarque,
+    produit: produit,
+    type_id: 1, // 1 = Livraison (as per your example)
+    poids: 1, // Default weight in kg
+    stop_desk: stop_desk,
+    station_code, // Noest payload has station_code
+    stock: 0,
+    quantite: quantite, // Formatted quantity
+    fragile: fragile // Noest payload includes fragile
+  };
+
+  // Call the function to send the payload to Noest and handle the response.
+  sendToNOEST(noestPayload, row, sheet);
+}
+
+
+
+function sendToNOEST(payload, row, sheet) {
+  const apiUrl = "https://app.noest-dz.com/api/public/create/order";
+
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+
+  try {
+    const res = UrlFetchApp.fetch(apiUrl, options);
+    const resText = res.getContentText();
+    Logger.log("✅ Noest Response code: " + res.getResponseCode());
+    Logger.log("✅ Noest Response body: " + resText);
+
+    // Write the raw response into column R (18)
+    sheet.getRange(row, 18).setValue(resText);
+
+  } catch (err) {
+    Logger.log("❌ ERROR creating Noest order: " + err);
+    sheet.getRange(row, 18).setValue("❌ NOEST ERROR: " + err);
+  }
+}
+
+
+// === 🚚 AREEX Livraison Logic ===
+function handleAREEX(row, sheet) { 
+  const get = col => sheet.getRange(row, col).getValue();
+  const reference = get(2), nom_client = get(3), telephone = get(4);
+  let code_wilaya = get(5), wilaya = get(6), commune = get(7), adresse = get(8);
+  const produit = get(9), fragileText = get(10), quantite = get(11), montant = get(14);
+  const stopDeskText = get(15), remarque = get(16);
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+
+// delete old order if  exists
+try {
+    const previous = get(18);
+    if (previous) {
+      const json = JSON.parse(previous);
+      const tracking = Object.keys(json?.data || {})[0];
+      if (tracking) {
+        const deleteUrl = `https://areex.ecotrack.dz/api/v1/delete/order?tracking=${tracking}`;
+        UrlFetchApp.fetch(deleteUrl, {
+          method: "delete",
+          headers: { "Authorization": `Bearer ${token}` },
+          muteHttpExceptions: true
+        });
+      }
+    }
+  } catch (err) {
+    Logger.log("❌ Failed to delete Previous order: " + err);
+  }
+const match = findMatchWithTolerance(wilaya, commune);
+if (match) {
+  wilaya = match.wilaya_name_ascii;
+  commune = match.commune_name_ascii;
+  code_wilaya = match.wilaya_code;
+  sheet.getRange(row, 6).setValue(wilaya);
+  sheet.getRange(row, 7).setValue(commune);
+}
+
+  if (code_wilaya) code_wilaya = code_wilaya.toString().trim().replace(/^0+/, "");
+
+  let stop_desk = 0;
+  if (typeof stopDeskText === "string") {
+    const lower = stopDeskText.trim().toLowerCase();
+    if (lower === "stop desk" || lower === "1") stop_desk = 1;
+  }
+
+  let fragile = 0;
+  if (typeof fragileText === "string" && fragileText.trim().toLowerCase() === "fragile") {
+    fragile = 1;
+  }
+
+  // Format commune
+  commune = commune ? commune.toString().trim().toLowerCase().replace(/\b\w/g, l => l.toUpperCase()) : "";
+
+  // === ✅ Validate stop desk support
+  if (stop_desk === 1 && commune) {
+    const apiUrl = "https://areex.ecotrack.dz/api/v1/get/communes";
+    const options = {
+      method: "get",
+      headers: { "Authorization": `Bearer ${token}` },
+      muteHttpExceptions: true
+    };
+    let communes = [];
+    try {
+      const res = UrlFetchApp.fetch(apiUrl, options);
+      const json = JSON.parse(res.getContentText());
+      communes = Object.values(json);
+    } catch (e) {
+      Logger.log("Failed to fetch commune data: " + e);
+    }
+
+    if (communes.length > 0) {
+      const match = communes.find(c => c.nom.toLowerCase() === commune.toLowerCase());
+      if (match && match.has_stop_desk === 0) {
+        stop_desk = 0;
+      }
+    }
+  }
+
+  if (!adresse) adresse = commune;
+
+  const payload = {
+    "orders": {
+      "0": {
+        reference, nom_client, telephone, "telephone_2": "",
+        adresse, "code_postal": "", commune, code_wilaya,
+        montant, remarque, produit, "stock": 0, quantite,
+        "produit_a_recuperer": "", "boutique": "", "type": "1",
+        stop_desk, "weight": "0", fragile
+      }
+    }
+  };
+
+  sendToAREEX(payload, row, sheet);
+}
+
+
+function sendToAREEX(payload, row, sheet) {
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+  const apiUrl = "https://areex.ecotrack.dz/api/v1/create/orders";
+
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    headers: { "Authorization": `Bearer ${token}` },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+
+  try {
+    const res = UrlFetchApp.fetch(apiUrl, options);
+    const resText = res.getContentText();
+    const json = JSON.parse(resText);
+
+    // ✅ Extract tracking from the correct structure
+    let tracking;
+    if (json && json.results) {
+      const firstKey = Object.keys(json.results)[0];
+      tracking = json.results[firstKey]?.tracking;
+    }
+
+    if (tracking) {
+const statusUrl = `https://areex.ecotrack.dz/api/v1/get/orders/status?api_token=${token}&trackings=${tracking}&status=all`;
+      const statusRes = UrlFetchApp.fetch(statusUrl, {
+        method: "get",
+        muteHttpExceptions: true
+      });
+
+      const statusText = statusRes.getContentText();
+      sheet.getRange(row, 18).setValue(`${statusText}`);
+
+    } else {
+      sheet.getRange(row, 18).setValue(` AREEX: ❌ no tracking found. Resp: ${resText}`);
+    }
+
+  } catch (err) {
+    sheet.getRange(row, 18).setValue(`❌ AREEX ERROR: ${err}`);
+  }
+}
+
+// === 🚚 OVRED Livraison Logic ===
+function handleOVRED(row, sheet) { 
+  const get = col => sheet.getRange(row, col).getValue();
+  const reference = get(2), nom_client = get(3), telephone = get(4);
+  let code_wilaya = get(5), wilaya = get(6), commune = get(7), adresse = get(8);
+  const produit = get(9), fragileText = get(10), quantite = get(11), montant = get(14);
+  const stopDeskText = get(15), remarque = get(16);
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+
+// delete old order if  exists
+try {
+    const previous = get(18);
+    if (previous) {
+      const json = JSON.parse(previous);
+      const tracking = Object.keys(json?.data || {})[0];
+      if (tracking) {
+        const deleteUrl = `https://ovred.ecotrack.dz/api/v1/delete/order?tracking=${tracking}`;
+        UrlFetchApp.fetch(deleteUrl, {
+          method: "delete",
+          headers: { "Authorization": `Bearer ${token}` },
+          muteHttpExceptions: true
+        });
+      }
+    }
+  } catch (err) {
+    Logger.log("❌ Failed to delete Previous order: " + err);
+  }
+const match = findMatchWithTolerance(wilaya, commune);
+if (match) {
+  wilaya = match.wilaya_name_ascii;
+  commune = match.commune_name_ascii;
+  code_wilaya = match.wilaya_code;
+  sheet.getRange(row, 6).setValue(wilaya);
+  sheet.getRange(row, 7).setValue(commune);
+}
+
+  if (code_wilaya) code_wilaya = code_wilaya.toString().trim().replace(/^0+/, "");
+
+  let stop_desk = 0;
+  if (typeof stopDeskText === "string") {
+    const lower = stopDeskText.trim().toLowerCase();
+    if (lower === "stop desk" || lower === "1") stop_desk = 1;
+  }
+
+  let fragile = 0;
+  if (typeof fragileText === "string" && fragileText.trim().toLowerCase() === "fragile") {
+    fragile = 1;
+  }
+
+  // Format commune
+  commune = commune ? commune.toString().trim().toLowerCase().replace(/\b\w/g, l => l.toUpperCase()) : "";
+
+  // === ✅ Validate stop desk support
+  if (stop_desk === 1 && commune) {
+    const apiUrl = "https://ovred.ecotrack.dz/api/v1/get/communes";
+    const options = {
+      method: "get",
+      headers: { "Authorization": `Bearer ${token}` },
+      muteHttpExceptions: true
+    };
+    let communes = [];
+    try {
+      const res = UrlFetchApp.fetch(apiUrl, options);
+      const json = JSON.parse(res.getContentText());
+      communes = Object.values(json);
+    } catch (e) {
+      Logger.log("Failed to fetch commune data: " + e);
+    }
+
+    if (communes.length > 0) {
+      const match = communes.find(c => c.nom.toLowerCase() === commune.toLowerCase());
+      if (match && match.has_stop_desk === 0) {
+        stop_desk = 0;
+      }
+    }
+  }
+
+  if (!adresse) adresse = commune;
+
+  const payload = {
+    "orders": {
+      "0": {
+        reference, nom_client, telephone, "telephone_2": "",
+        adresse, "code_postal": "", commune, code_wilaya,
+        montant, remarque, produit, "stock": 1, quantite,
+        "produit_a_recuperer": "", "boutique": "", "type": "1",
+        stop_desk, "weight": "0", fragile
+      }
+    }
+  };
+
+  sendToOVRED(payload, row, sheet);
+}
+
+
+function sendToOVRED(payload, row, sheet) {
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+  const apiUrl = "https://ovred.ecotrack.dz/api/v1/create/orders";
+
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    headers: { "Authorization": `Bearer ${token}` },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+
+  try {
+    const res = UrlFetchApp.fetch(apiUrl, options);
+    const resText = res.getContentText();
+    const json = JSON.parse(resText);
+
+    // ✅ Extract tracking from the correct structure
+    let tracking;
+    if (json && json.results) {
+      const firstKey = Object.keys(json.results)[0];
+      tracking = json.results[firstKey]?.tracking;
+    }
+
+    if (tracking) {
+const statusUrl = `https://ovred.ecotrack.dz/api/v1/get/orders/status?api_token=${token}&trackings=${tracking}&status=all`;
+      const statusRes = UrlFetchApp.fetch(statusUrl, {
+        method: "get",
+        muteHttpExceptions: true
+      });
+
+      const statusText = statusRes.getContentText();
+      sheet.getRange(row, 18).setValue(`${statusText}`);
+
+    } else {
+      sheet.getRange(row, 18).setValue(` OVRED: ❌ no tracking found. Resp: ${resText}`);
+    }
+
+  } catch (err) {
+    sheet.getRange(row, 18).setValue(`❌ OVRED ERROR: ${err}`);
+  }
+}
+
+// === 🚚 WORLDEXPRESS Livraison Logic ===
+
+function handleWORLDEXPRESS(row, sheet) { 
+  const get = col => sheet.getRange(row, col).getValue();
+  const reference = get(2), nom_client = get(3), telephone = get(4);
+  let code_wilaya = get(5), wilaya = get(6), commune = get(7), adresse = get(8);
+  const produit = get(9), fragileText = get(10), quantite = get(11), montant = get(14);
+  const stopDeskText = get(15), remarque = get(16);
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+
+// delete old order if  exists
+try {
+    const previous = get(18);
+    if (previous) {
+      const json = JSON.parse(previous);
+      const tracking = Object.keys(json?.data || {})[0];
+      if (tracking) {
+        const deleteUrl = `https://world-express.ecotrack.dz/api/v1/delete/order?tracking=${tracking}`;
+        UrlFetchApp.fetch(deleteUrl, {
+          method: "delete",
+          headers: { "Authorization": `Bearer ${token}` },
+          muteHttpExceptions: true
+        });
+      }
+    }
+  } catch (err) {
+    Logger.log("❌ Failed to delete Previous order: " + err);
+  }
+const match = findMatchWithTolerance(wilaya, commune);
+if (match) {
+  wilaya = match.wilaya_name_ascii;
+  commune = match.commune_name_ascii;
+  code_wilaya = match.wilaya_code;
+  sheet.getRange(row, 6).setValue(wilaya);
+  sheet.getRange(row, 7).setValue(commune);
+}
+  if (code_wilaya) code_wilaya = code_wilaya.toString().trim().replace(/^0+/, "");
+
+  let stop_desk = 0;
+  if (typeof stopDeskText === "string") {
+    const lower = stopDeskText.trim().toLowerCase();
+    if (lower === "stop desk" || lower === "1") stop_desk = 1;
+  }
+
+  let fragile = 0;
+  if (typeof fragileText === "string" && fragileText.trim().toLowerCase() === "fragile") {
+    fragile = 1;
+  }
+
+  // Format commune
+  commune = commune ? commune.toString().trim().toLowerCase().replace(/\b\w/g, l => l.toUpperCase()) : "";
+
+  // === ✅ Validate stop desk support
+  if (stop_desk === 1 && commune) {
+    const apiUrl = "https://world-express.ecotrack.dz/api/v1/get/communes";
+    const options = {
+      method: "get",
+      headers: { "Authorization": `Bearer ${token}` },
+      muteHttpExceptions: true
+    };
+    let communes = [];
+    try {
+      const res = UrlFetchApp.fetch(apiUrl, options);
+      const json = JSON.parse(res.getContentText());
+      communes = Object.values(json);
+    } catch (e) {
+      Logger.log("Failed to fetch commune data: " + e);
+    }
+
+    if (communes.length > 0) {
+      const match = communes.find(c => c.nom.toLowerCase() === commune.toLowerCase());
+      if (match && match.has_stop_desk === 0) {
+        stop_desk = 0;
+      }
+    }
+  }
+
+  if (!adresse) adresse = commune;
+
+  const payload = {
+    "orders": {
+      "0": {
+        reference, nom_client, telephone, "telephone_2": "",
+        adresse, "code_postal": "", commune, code_wilaya,
+        montant, remarque, produit, "stock": 0, quantite,
+        "produit_a_recuperer": "", "boutique": "", "type": "1",
+        stop_desk, "weight": "0", fragile
+      }
+    }
+  };
+
+  sendToWORLDEXPRESS(payload, row, sheet);
+}
+
+
+function sendToWORLDEXPRESS(payload, row, sheet) {
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+  const apiUrl = "https://world-express.ecotrack.dz/api/v1/create/orders";
+
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    headers: { "Authorization": `Bearer ${token}` },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+
+  try {
+    const res = UrlFetchApp.fetch(apiUrl, options);
+    const resText = res.getContentText();
+    const json = JSON.parse(resText);
+
+    // ✅ Extract tracking from the correct structure
+    let tracking;
+    if (json && json.results) {
+      const firstKey = Object.keys(json.results)[0];
+      tracking = json.results[firstKey]?.tracking;
+    }
+
+    if (tracking) {
+const statusUrl = `https://world-express.ecotrack.dz/api/v1/get/orders/status?api_token=${token}&trackings=${tracking}&status=all`;
+      const statusRes = UrlFetchApp.fetch(statusUrl, {
+        method: "get",
+        muteHttpExceptions: true
+      });
+
+      const statusText = statusRes.getContentText();
+      sheet.getRange(row, 18).setValue(`${statusText}`);
+
+    } else {
+      sheet.getRange(row, 18).setValue(` WORLDEXPRESS: ❌ no tracking found. Resp: ${resText}`);
+    }
+
+  } catch (err) {
+    sheet.getRange(row, 18).setValue(`❌ WORLDEXPRESS ERROR: ${err}`);
+  }
+}
+// === 🚚 48HR Livraison Logic ===
+function handle48HR(row, sheet) { 
+  const get = col => sheet.getRange(row, col).getValue();
+  const reference = get(2), nom_client = get(3), telephone = get(4);
+  let code_wilaya = get(5), wilaya = get(6), commune = get(7), adresse = get(8);
+  const produit = get(9), fragileText = get(10), quantite = get(11), montant = get(14);
+  const stopDeskText = get(15), remarque = get(16);
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+
+// delete old order if  exists
+try {
+    const previous = get(18);
+    if (previous) {
+      const json = JSON.parse(previous);
+      const tracking = Object.keys(json?.data || {})[0];
+      if (tracking) {
+        const deleteUrl = `https://48hr.ecotrack.dz/api/v1/delete/order?tracking=${tracking}`;
+        UrlFetchApp.fetch(deleteUrl, {
+          method: "delete",
+          headers: { "Authorization": `Bearer ${token}` },
+          muteHttpExceptions: true
+        });
+      }
+    }
+  } catch (err) {
+    Logger.log("❌ Failed to delete Previous order: " + err);
+  }
+const match = findMatchWithTolerance(wilaya, commune);
+if (match) {
+  wilaya = match.wilaya_name_ascii;
+  commune = match.commune_name_ascii;
+  code_wilaya = match.wilaya_code;
+  sheet.getRange(row, 6).setValue(wilaya);
+  sheet.getRange(row, 7).setValue(commune);
+}
+
+  if (code_wilaya) code_wilaya = code_wilaya.toString().trim().replace(/^0+/, "");
+
+  let stop_desk = 0;
+  if (typeof stopDeskText === "string") {
+    const lower = stopDeskText.trim().toLowerCase();
+    if (lower === "stop desk" || lower === "1") stop_desk = 1;
+  }
+
+  let fragile = 0;
+  if (typeof fragileText === "string" && fragileText.trim().toLowerCase() === "fragile") {
+    fragile = 1;
+  }
+
+  // Format commune
+  commune = commune ? commune.toString().trim().toLowerCase().replace(/\b\w/g, l => l.toUpperCase()) : "";
+
+  // === ✅ Validate stop desk support
+  if (stop_desk === 1 && commune) {
+    const apiUrl = "https://48hr.ecotrack.dz/api/v1/get/communes";
+    const options = {
+      method: "get",
+      headers: { "Authorization": `Bearer ${token}` },
+      muteHttpExceptions: true
+    };
+    let communes = [];
+    try {
+      const res = UrlFetchApp.fetch(apiUrl, options);
+      const json = JSON.parse(res.getContentText());
+      communes = Object.values(json);
+    } catch (e) {
+      Logger.log("Failed to fetch commune data: " + e);
+    }
+
+    if (communes.length > 0) {
+      const match = communes.find(c => c.nom.toLowerCase() === commune.toLowerCase());
+      if (match && match.has_stop_desk === 0) {
+        stop_desk = 0;
+      }
+    }
+  }
+
+  if (!adresse) adresse = commune;
+
+  const payload = {
+    "orders": {
+      "0": {
+        reference, nom_client, telephone, "telephone_2": "",
+        adresse, "code_postal": "", commune, code_wilaya,
+        montant, remarque, produit, "stock": 0, quantite,
+        "produit_a_recuperer": "", "boutique": "", "type": "1",
+        stop_desk, "weight": "0", fragile
+      }
+    }
+  };
+
+  sendTo48HR(payload, row, sheet);
+}
+
+
+function sendTo48HR(payload, row, sheet) {
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+  const apiUrl = "https://48hr.ecotrack.dz/api/v1/create/orders";
+
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    headers: { "Authorization": `Bearer ${token}` },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+
+  try {
+    const res = UrlFetchApp.fetch(apiUrl, options);
+    const resText = res.getContentText();
+    const json = JSON.parse(resText);
+
+    // ✅ Extract tracking from the correct structure
+    let tracking;
+    if (json && json.results) {
+      const firstKey = Object.keys(json.results)[0];
+      tracking = json.results[firstKey]?.tracking;
+    }
+
+    if (tracking) {
+const statusUrl = `https://48hr.ecotrack.dz/api/v1/get/orders/status?api_token=${token}&trackings=${tracking}&status=all`;
+      const statusRes = UrlFetchApp.fetch(statusUrl, {
+        method: "get",
+        muteHttpExceptions: true
+      });
+
+      const statusText = statusRes.getContentText();
+      sheet.getRange(row, 18).setValue(`${statusText}`);
+
+    } else {
+      sheet.getRange(row, 18).setValue(` 48HR: ❌ no tracking found. Resp: ${resText}`);
+    }
+
+  } catch (err) {
+    sheet.getRange(row, 18).setValue(`❌ 48HR: ${err}`);
+  }
+}
+// === 🚚 ELOGISTIA Livraison Logic ===
+function handleELOGISTIA(row, sheet) { 
+  const get = col => sheet.getRange(row, col).getValue();
+  const reference = get(2), nom_client = get(3), telephone = get(4);
+  let code_wilaya = get(5), wilaya = get(6), commune = get(7), adresse = get(8);
+  const produit = get(9), montant = get(14);
+  const stopDeskText = get(15), remarque = get(16);
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+
+  // === 🔁 Delete old order if exists
+  try {
+  const previous = get(18);
+  if (previous) {
+    const json = JSON.parse(previous);
+    const tracking = json.success || Object.keys(json || {})[0]; // try success key first
+    if (tracking) {
+      const deleteUrl = `https://api.elogistia.com/deleteOrder/?apiKey=${token}&tracking=${tracking}`;
+      UrlFetchApp.fetch(deleteUrl, {
+        method: "delete",
+        headers: { "Authorization": `Bearer ${token}` },
+        muteHttpExceptions: true
+      });
+    }
+  }
+} catch (err) {
+  Logger.log("❌ Failed to delete previous ELOGISTIA order: " + err);
+}
+
+
+const match = findMatchWithTolerance(wilaya, commune);
+if (match) {
+  // Apply provider-specific fix before writing
+  wilaya = 
+    fixWilayaForElogistia(match.wilaya_name_ascii)
+  ;
+  commune = match.commune_name_ascii;
+  code_wilaya = match.wilaya_code;
+
+  sheet.getRange(row, 5).setValue(code_wilaya);
+  sheet.getRange(row, 6).setValue(wilaya);
+  sheet.getRange(row, 7).setValue(commune);
+}
+
+
+  if (code_wilaya) code_wilaya = code_wilaya.toString().trim().replace(/^0+/, "");
+  if (!adresse) adresse = commune;
+
+let stop_desk = 1;
+
+if ((stopDeskText + "").trim().toLowerCase() === "stop desk") {
+  try {
+    const shippingRes = UrlFetchApp.fetch(`https://api.elogistia.com/getShippingCost/?key=${token}`);
+    const shippingData = JSON.parse(shippingRes.getContentText())?.body || [];
+
+    const found = shippingData.find(e => e.wilayaID == code_wilaya);
+
+    if (found && found.stopdesk && found.stopdesk !== "0") {
+      stop_desk = 2;
+    } else {
+      stop_desk = 1; // Fallback to door delivery
+    }
+  } catch (e) {
+    Logger.log("❌ Failed to check stop desk support: " + e);
+  }
+}
+
+
+  // === 🧾 Format
+  const params = {
+    apiKey: token,
+    name: nom_client,
+    firstname: nom_client,
+    mail: `test-${reference}@example.com`,
+    phone: telephone,
+    address: adresse,
+    commune: commune,
+    wilaya: code_wilaya,
+    fraisDeLivraison: "0",
+    remarque: remarque || "",
+    stop_desk: stop_desk,
+    modeDeLivraison: "1",
+    product: produit || "",
+    price: montant || "",
+    exchangeName: "",
+    IdCommande: reference
+  };
+
+  const queryString = Object.keys(params)
+    .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
+    .join("&");
+
+  const apiUrl = `https://api.elogistia.com/insertCommande/?${queryString}`;
+
+  try {
+    const response = UrlFetchApp.fetch(apiUrl, {
+      method: "get",
+      muteHttpExceptions: true
+    });
+
+    const resText = response.getContentText();
+    sheet.getRange(row, 18).setValue(resText);
+
+  } catch (err) {
+    sheet.getRange(row, 18).setValue(`❌ ELOGISTIA ERROR: ${err}`);
+  }
+}
+
+// === 🚚 NAVEX Delivery Livraison Logic ===
+function handleNAVEX(row, sheet) { 
+  const get = col => sheet.getRange(row, col).getValue();
+  const reference = get(2), nom_client = get(3), telephone = get(4);
+  let code_wilaya = get(5), wilaya = get(6), commune = get(7), adresse = get(8);
+  const produit = get(9), fragileText = get(10), quantite = get(11), montant = get(14);
+  const stopDeskText = get(15), remarque = get(16);
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+
+// delete old order if  exists
+try {
+    const previous = get(18);
+    if (previous) {
+      const json = JSON.parse(previous);
+      const tracking = Object.keys(json?.data || {})[0];
+      if (tracking) {
+        const deleteUrl = `https://navexdelivery.ecotrack.dz/api/v1/delete/order?tracking=${tracking}`;
+        UrlFetchApp.fetch(deleteUrl, {
+          method: "delete",
+          headers: { "Authorization": `Bearer ${token}` },
+          muteHttpExceptions: true
+        });
+      }
+    }
+  } catch (err) {
+    Logger.log("❌ Failed to delete Previous order: " + err);
+  }
+const match = findMatchWithTolerance(wilaya, commune);
+if (match) {
+  wilaya = match.wilaya_name_ascii;
+  commune = match.commune_name_ascii;
+  code_wilaya = match.wilaya_code;
+  sheet.getRange(row, 6).setValue(wilaya);
+  sheet.getRange(row, 7).setValue(commune);
+}
+
+  if (code_wilaya) code_wilaya = code_wilaya.toString().trim().replace(/^0+/, "");
+
+  let stop_desk = 0;
+  if (typeof stopDeskText === "string") {
+    const lower = stopDeskText.trim().toLowerCase();
+    if (lower === "stop desk" || lower === "1") stop_desk = 1;
+  }
+
+  let fragile = 0;
+  if (typeof fragileText === "string" && fragileText.trim().toLowerCase() === "fragile") {
+    fragile = 1;
+  }
+
+  // Format commune
+  commune = commune ? commune.toString().trim().toLowerCase().replace(/\b\w/g, l => l.toUpperCase()) : "";
+
+  // === ✅ Validate stop desk support
+  if (stop_desk === 1 && commune) {
+    const apiUrl = "https://navexdelivery.ecotrack.dz/api/v1/get/communes";
+    const options = {
+      method: "get",
+      headers: { "Authorization": `Bearer ${token}` },
+      muteHttpExceptions: true
+    };
+    let communes = [];
+    try {
+      const res = UrlFetchApp.fetch(apiUrl, options);
+      const json = JSON.parse(res.getContentText());
+      communes = Object.values(json);
+    } catch (e) {
+      Logger.log("Failed to fetch commune data: " + e);
+    }
+
+    if (communes.length > 0) {
+      const match = communes.find(c => c.nom.toLowerCase() === commune.toLowerCase());
+      if (match && match.has_stop_desk === 0) {
+        stop_desk = 0;
+      }
+    }
+  }
+
+  if (!adresse) adresse = commune;
+
+  const payload = {
+    "orders": {
+      "0": {
+        reference, nom_client, telephone, "telephone_2": "",
+        adresse, "code_postal": "", commune, code_wilaya,
+        montant, remarque, produit, "stock": 0, quantite,
+        "produit_a_recuperer": "", "boutique": "", "type": "1",
+        stop_desk, "weight": "0", fragile
+      }
+    }
+  };
+
+  sendToNAVEX(payload, row, sheet);
+}
+
+
+function sendToNAVEX(payload, row, sheet) {
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+  const apiUrl = "https://navexdelivery.ecotrack.dz/api/v1/create/orders";
+
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    headers: { "Authorization": `Bearer ${token}` },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+
+  try {
+    const res = UrlFetchApp.fetch(apiUrl, options);
+    const resText = res.getContentText();
+    const json = JSON.parse(resText);
+
+    // ✅ Extract tracking from the correct structure
+    let tracking;
+    if (json && json.results) {
+      const firstKey = Object.keys(json.results)[0];
+      tracking = json.results[firstKey]?.tracking;
+    }
+
+    if (tracking) {
+const statusUrl = `https://navexdelivery.ecotrack.dz/api/v1/get/orders/status?api_token=${token}&trackings=${tracking}&status=all`;
+      const statusRes = UrlFetchApp.fetch(statusUrl, {
+        method: "get",
+        muteHttpExceptions: true
+      });
+
+      const statusText = statusRes.getContentText();
+      sheet.getRange(row, 18).setValue(`${statusText}`);
+
+    } else {
+      sheet.getRange(row, 18).setValue(` NAVEX: ❌ no tracking found. Resp: ${resText}`);
+    }
+
+  } catch (err) {
+    sheet.getRange(row, 18).setValue(`❌ NAVEX: ${err}`);
+  }
+}
+// === 🚚 ZRexpress Logic ===
+function handleZR(row, sheet) {
+  const get = col => sheet.getRange(row, col).getValue();
+
+  let code_wilaya = get(5), wilaya = get(6), commune = get(7);
+
+const match = findMatchWithTolerance(wilaya, commune);
+if (match) {
+  wilaya = match.wilaya_name_ascii;
+  commune = match.commune_name_ascii;
+  code_wilaya = match.wilaya_code;
+  sheet.getRange(row, 6).setValue(wilaya);
+  sheet.getRange(row, 7).setValue(commune);
+}
+
+  const payload = {
+    "Colis": [{
+      "Tracking": "",
+      "TypeLivraison": (String(get(15)).toLowerCase().trim() === "stop desk") ? "1" : "0",
+      "TypeColis": "0",  "Confrimee" : "",
+      "Client": get(3), "MobileA": get(4), "MobileB": "",
+      "Adresse": get(8), "IDWilaya": code_wilaya, "Commune": commune,
+      "Total": get(14), "Note": get(16), "TProduit": get(9),
+      "Id_Externe": get(2), "Source": ""
+    }]
+  };
+
+  sendToZR(payload, row, sheet);
+}
+
+function sendToZR(payload, row, sheet) {
+  const props = PropertiesService.getDocumentProperties();
+  const token = props.getProperty("API_TOKEN");
+  const key = props.getProperty("API_KEY");
+  const apiUrl = "https://procolis.com/api_v1/add_colis";
+
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    headers: { "token": token, "key": key },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+
+  try {
+    const res = UrlFetchApp.fetch(apiUrl, options);
+sheet.getRange(row, 18).setValue(`✅ ZR: ${res.getContentText()}`);
+  } catch (err) {
+   sheet.getRange(row, 18).setValue(`❌ ZR ERROR: ${err}`);
+  }
+}
+// === 🚚 ECOM Delivery Logic ===
+function handleECOM(row, sheet) {
+  const get = col => sheet.getRange(row, col).getValue();
+
+  let code_wilaya = get(5), wilaya = get(6), commune = get(7);
+
+const match = findMatchWithTolerance(wilaya, commune);
+if (match) {
+  wilaya = match.wilaya_name_ascii;
+  commune = match.commune_name_ascii;
+  code_wilaya = match.wilaya_code;
+  sheet.getRange(row, 6).setValue(wilaya);
+  sheet.getRange(row, 7).setValue(commune);
+}
+  const payload = {
+    "Colis": [{
+      "Tracking": "",
+      "TypeLivraison": (String(get(15)).toLowerCase().trim() === "stop desk") ? "1" : "0",
+      "TypeColis": "0",  "Confrimee" : "",
+      "Client": get(3), "MobileA": get(4), "MobileB": "",
+      "Adresse": get(8), "IDWilaya": code_wilaya, "Commune": commune,
+      "Total": get(14), "Note": get(16), "TProduit": get(9),
+      "Id_Externe": get(2), "Source": ""
+    }]
+  };
+
+  sendToECOM(payload, row, sheet);
+}
+
+function sendToECOM(payload, row, sheet) {
+  const props = PropertiesService.getDocumentProperties();
+  const token = props.getProperty("API_TOKEN");
+  const key = props.getProperty("API_KEY");
+  const apiUrl = "https://procolis.com/api_v1/add_colis";
+
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    headers: { "token": token, "key": key },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+
+  try {
+    const res = UrlFetchApp.fetch(apiUrl, options);
+sheet.getRange(row, 18).setValue(`✅ ECOM: ${res.getContentText()}`);
+  } catch (err) {
+sheet.getRange(row, 18).setValue(`❌ ECOM ERROR: ${err}`);
+  }
+}
+// === 🚚 COLIRELI Logic ===
+function handleCOLIRELI(row, sheet) {
+  const get = col => sheet.getRange(row, col).getValue();
+
+  let code_wilaya = get(5), wilaya = get(6), commune = get(7);
+
+const match = findMatchWithTolerance(wilaya, commune);
+if (match) {
+  wilaya = match.wilaya_name_ascii;
+  commune = match.commune_name_ascii;
+  code_wilaya = match.wilaya_code;
+  sheet.getRange(row, 6).setValue(wilaya);
+  sheet.getRange(row, 7).setValue(commune);
+}
+
+  const payload = {
+    "Colis": [{
+      "Tracking": "",
+      "TypeLivraison": (String(get(15)).toLowerCase().trim() === "stop desk") ? "1" : "0",
+      "TypeColis": "0",  "Confrimee" : "",
+      "Client": get(3), "MobileA": get(4), "MobileB": "",
+      "Adresse": get(8), "IDWilaya": code_wilaya, "Commune": commune,
+      "Total": get(14), "Note": get(16), "TProduit": get(9),
+      "Id_Externe": get(2), "Source": ""
+    }]
+  };
+
+  sendToCOLIRELI(payload, row, sheet);
+}
+
+function sendToCOLIRELI(payload, row, sheet) {
+  const props = PropertiesService.getDocumentProperties();
+  const token = props.getProperty("API_TOKEN");
+  const key = props.getProperty("API_KEY");
+  const apiUrl = "https://procolis.com/api_v1/add_colis";
+
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    headers: { "token": token, "key": key },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+
+  try {
+    const res = UrlFetchApp.fetch(apiUrl, options);
+sheet.getRange(row, 18).setValue(`✅ COLIRELI: ${res.getContentText()}`);
+  } catch (err) {
+   sheet.getRange(row, 18).setValue(`❌ COLIRELI: ${err}`);
+  }
+}
+// === 🚚 Yalidine Logic ===
+function handleYALIDINE(row, sheet) {
+  const get = col => sheet.getRange(row, col).getValue();
+  const reference = get(2), nom_client = get(3), telephone = get(4);
+  let  wilaya = get(6), commune = get(7), adresse = get(8);
+  const  price = get(14) ,produit = get(9), quantite = get(11), montant = get(14);
+  const stopDeskText = get(15), weight = get(13);
+
+  const props = PropertiesService.getDocumentProperties();
+  const apiId = props.getProperty("API_KEY");
+  const apiToken = props.getProperty("API_TOKEN");
+
+  try {
+    const previous = get(18);
+    if (previous) {
+      const json = JSON.parse(previous);
+      const tracking = json?.tracking;
+      if (tracking) {
+        const deleteUrl = `https://api.yalidine.app/v1/parcels/?tracking=${tracking}`;
+        UrlFetchApp.fetch(deleteUrl, {
+          method: "delete",
+          headers: {
+            "X-API-ID": apiId,
+            "X-API-TOKEN": apiToken
+          },
+          muteHttpExceptions: true
+        });
+      }
+    }
+  } catch (err) {
+    Logger.log("❌ Failed to delete old Previous order: " + err);
+  }
+
+  const match = findMatchWithTolerance(wilaya, commune);
+  if (match) {
+    wilaya = match.wilaya_name_ascii;
+    commune = match.commune_name_ascii;
+    code_wilaya = match.wilaya_code;
+
+    sheet.getRange(row, 6).setValue(wilaya);
+    sheet.getRange(row, 7).setValue(commune);
+  }
+
+  let is_stopdesk = (String(stopDeskText).toLowerCase().trim() === "stop desk" || stopDeskText === true);
+
+  // === 🛑 Check if this commune supports stop desk
+  if (is_stopdesk) {
+    const apiUrl = "https://api.yalidine.app/v1/communes/";
+    const options = {
+      method: "get",
+      headers: {
+        "X-API-ID": apiId,
+        "X-API-TOKEN": apiToken
+      },
+      muteHttpExceptions: true
+    };
+
+    try {
+      const res = UrlFetchApp.fetch(apiUrl, options);
+      const json = JSON.parse(res.getContentText());
+
+      const communes = json?.data || [];
+      const match = communes.find(c => normalize(c.name) === normalize(commune));
+      if (match && match.has_stop_desk === 0) {
+        is_stopdesk = false; // ❌ Fallback to door delivery
+      }
+    } catch (e) {
+      Logger.log("❌ YALIDINE commune fetch failed: " + e);
+    }
+  }
+
+  if (!adresse) adresse = commune;
+
+  const parcel = {
+  "order_id": reference,
+  "from_wilaya_name": "Constantine",
+  "firstname": nom_client,
+  "familyname": "",
+  "contact_phone": telephone,
+  "address": adresse,
+  "to_commune_name": commune,
+  "to_wilaya_name": wilaya,
+  "product_list": produit + ", الكمية: " + quantite, // ✅ صح
+  "price": Number(price) || 0,
+  "do_insurance": false,
+  "declared_value": Number(montant) || 0,
+  "height": 10,
+  "width": 20,
+  "length": 30,
+  "weight": 1,
+  "freeshipping": true,
+  "is_stopdesk": is_stopdesk,
+  ...(is_stopdesk ? { "stopdesk_id": getStopDeskId(apiId, apiToken, wilaya, commune) } : {}),
+  "has_exchange": false,
+  "product_to_collect": null
+};
+
+
+  sendToYALIDINE(parcel, row, sheet);
+}
+
+function sendToYALIDINE(parcel, row, sheet) {
+  const props = PropertiesService.getDocumentProperties();
+  const apiId = props.getProperty("API_KEY");
+  const apiToken = props.getProperty("API_TOKEN");
+
+  const url = "https://api.yalidine.app/v1/parcels/";
+  const payload = JSON.stringify([parcel]);
+
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    headers: {
+      "X-API-ID": apiId,
+      "X-API-TOKEN": apiToken
+    },
+    payload,
+    muteHttpExceptions: true
+  };
+
+  try {
+    const res = UrlFetchApp.fetch(url, options);
+    const resText = res.getContentText();
+    const json = JSON.parse(resText);
+
+    const tracking = json?.[0]?.tracking;
+    if (tracking) {
+      // === Immediately fetch status
+      const historyUrl = `https://api.yalidine.app/v1/histories/${tracking}`;
+      const historyOptions = {
+        method: "get",
+        headers: {
+          "X-API-ID": apiId,
+          "X-API-TOKEN": apiToken
+        },
+        muteHttpExceptions: true
+      };
+
+      const historyRes = UrlFetchApp.fetch(historyUrl, historyOptions);
+      const historyJson = JSON.parse(historyRes.getContentText());
+
+      const record = historyJson?.data?.find(entry => entry.tracking === tracking);
+      if (record) {
+        sheet.getRange(row, 18).setValue(JSON.stringify(record)); // ✅ pure JSON only
+      } else {
+        sheet.getRange(row, 18).setValue(JSON.stringify({ note: "✅ Tracking found, but not in /histories" }));
+      }
+
+    } else {
+      sheet.getRange(row, 18).setValue(resText); // ✅ save raw JSON (avoid "Unexpected token Y")
+    }
+
+  } catch (err) {
+    sheet.getRange(row, 18).setValue(JSON.stringify({ error: String(err) }));
+  }
+}
+
+// === 🚚 Guepex Logic ===
+function handleGUEPEX(row, sheet) {
+  const get = col => sheet.getRange(row, col).getValue();
+  const reference = get(2), nom_client = get(3), telephone = get(4);
+  let  wilaya = get(6), commune = get(7), adresse = get(8);
+  const  price = get(12) ,produit = get(9), quantite = get(11), montant = get(14);
+  const stopDeskText = get(15), weight = get(13);
+
+  const props = PropertiesService.getDocumentProperties();
+  const apiId = props.getProperty("API_KEY");
+  const apiToken = props.getProperty("API_TOKEN");
+
+  try {
+    const previous = get(18);
+    if (previous) {
+      const json = JSON.parse(previous);
+      const tracking = json?.tracking;
+      if (tracking) {
+        const deleteUrl = `https://api.guepex.app/v1/parcels/?tracking=${tracking}`;
+        UrlFetchApp.fetch(deleteUrl, {
+          method: "delete",
+          headers: {
+            "X-API-ID": apiId,
+            "X-API-TOKEN": apiToken
+          },
+          muteHttpExceptions: true
+        });
+      }
+    }
+  } catch (err) {
+    Logger.log("❌ Failed to delete old Previous order: " + err);
+  }
+
+  const match = findMatchWithTolerance(wilaya, commune);
+  if (match) {
+    wilaya = match.wilaya_name_ascii;
+    commune = match.commune_name_ascii;
+    code_wilaya = match.wilaya_code;
+
+    sheet.getRange(row, 6).setValue(wilaya);
+    sheet.getRange(row, 7).setValue(commune);
+  }
+
+  let is_stopdesk = (String(stopDeskText).toLowerCase().trim() === "stop desk" || stopDeskText === true);
+
+  // === 🛑 Check if this commune supports stop desk
+  if (is_stopdesk) {
+    const apiUrl = "https://api.guepex.app/v1/communes/";
+    const options = {
+      method: "get",
+      headers: {
+        "X-API-ID": apiId,
+        "X-API-TOKEN": apiToken
+      },
+      muteHttpExceptions: true
+    };
+
+    try {
+      const res = UrlFetchApp.fetch(apiUrl, options);
+      const json = JSON.parse(res.getContentText());
+
+      const communes = json?.data || [];
+      const match = communes.find(c => normalize(c.name) === normalize(commune));
+      if (match && match.has_stop_desk === 0) {
+        is_stopdesk = false; // ❌ Fallback to door delivery
+      }
+    } catch (e) {
+      Logger.log("❌ YALIDINE commune fetch failed: " + e);
+    }
+  }
+
+  if (!adresse) adresse = commune;
+
+  const parcel = {
+    "order_id": reference,
+    "from_wilaya_name": "Alger",
+    "firstname": nom_client,
+    "familyname": "",
+    "contact_phone": telephone,
+    "address": adresse,
+    "to_commune_name": commune,
+    "to_wilaya_name": wilaya,
+    "product_list": produit,   // ✅ string (per API spec)
+    "price": Number(price) || 0,
+    "do_insurance": false,
+    "declared_value": Number(montant) || 0,
+    "height": 10, "width": 20, "length": 30, "weight": Number(weight) || 1,
+    "freeshipping": true,
+    "is_stopdesk": is_stopdesk,
+...(is_stopdesk ? { "stopdesk_id": getStopDeskId(apiId, apiToken, wilaya, commune) } : {}),
+    "has_exchange": false,
+    "product_to_collect": null
+  };
+
+  sendToGUEPEX(parcel, row, sheet);
+}
+
+function sendToGUEPEX(parcel, row, sheet) {
+  const props = PropertiesService.getDocumentProperties();
+  const apiId = props.getProperty("API_KEY");
+  const apiToken = props.getProperty("API_TOKEN");
+
+  const url = "https://api.guepex.app/v1/parcels/";
+  const payload = JSON.stringify([parcel]);
+
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    headers: {
+      "X-API-ID": apiId,
+      "X-API-TOKEN": apiToken
+    },
+    payload,
+    muteHttpExceptions: true
+  };
+
+  try {
+    const res = UrlFetchApp.fetch(url, options);
+    const resText = res.getContentText();
+    const json = JSON.parse(resText);
+
+    const tracking = json?.[0]?.tracking;
+    if (tracking) {
+      // === Immediately fetch status
+      const historyUrl = `https://api.guepex.app/v1/histories/${tracking}`;
+      const historyOptions = {
+        method: "get",
+        headers: {
+          "X-API-ID": apiId,
+          "X-API-TOKEN": apiToken
+        },
+        muteHttpExceptions: true
+      };
+
+      const historyRes = UrlFetchApp.fetch(historyUrl, historyOptions);
+      const historyJson = JSON.parse(historyRes.getContentText());
+
+      const record = historyJson?.data?.find(entry => entry.tracking === tracking);
+      if (record) {
+        sheet.getRange(row, 18).setValue(JSON.stringify(record)); // ✅ pure JSON only
+      } else {
+        sheet.getRange(row, 18).setValue(JSON.stringify({ note: "✅ Tracking found, but not in /histories" }));
+      }
+
+    } else {
+      sheet.getRange(row, 18).setValue(resText); // ✅ save raw JSON (avoid "Unexpected token Y")
+    }
+
+  } catch (err) {
+    sheet.getRange(row, 18).setValue(JSON.stringify({ error: String(err) }));
+  }
+}
+
+// === 🚚 SALVA Logic ===
+function handleSALVA(row, sheet) { 
+  const get = col => sheet.getRange(row, col).getValue();
+  const reference = get(1), nom_client = get(6), telephone = get(7);
+  let  wilaya = get(6), commune = get(7), adresse = get(7);
+  const fragileText = get(16), quantite = get(4), montant = get(5);
+  const stopDeskText = get(13),stockText = get(14), remarque = get(16);
+  const produitName = (get(3) + " " + get(12)).trim();
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+
+// delete old order if  exists
+try {
+    const previous = get(18);
+    if (previous) {
+      const json = JSON.parse(previous);
+      const tracking = Object.keys(json?.data || {})[0];
+      if (tracking) {
+        const deleteUrl = `https://salvadelivery.ecotrack.dz/api/v1/delete/order?tracking=${tracking}`;
+        UrlFetchApp.fetch(deleteUrl, {
+          method: "delete",
+          headers: { "Authorization": `Bearer ${token}` },
+          muteHttpExceptions: true
+        });
+      }
+    }
+  } catch (err) {
+    Logger.log("❌ Failed to delete Previous order: " + err);
+  }
+const match = findMatchWithTolerance(wilaya, commune);
+if (match) {
+  wilaya = match.wilaya_name_ascii;
+  commune = match.commune_name_ascii;
+  code_wilaya = match.wilaya_code;
+  sheet.getRange(row, 6).setValue(wilaya);
+  sheet.getRange(row, 7).setValue(commune);
+}
+
+  if (code_wilaya) code_wilaya = code_wilaya.toString().trim().replace(/^0+/, "");
+
+  let stop_desk = 0;
+  if (typeof stopDeskText === "string") {
+    const lower = stopDeskText.trim().toLowerCase();
+    if (lower === "stop desk" || lower === "1") stop_desk = 1;
+  }
+
+  let fragile = 0;
+  if (typeof fragileText === "string" && fragileText.trim().toLowerCase() === "fragile") {
+    fragile = 1;
+  }
+  let stock = 0;
+  if (typeof stockText === "string" && stockText.trim().toLowerCase() === "stock") {
+    stock = 1;
+  }
+  let produit;
+  if (stock === 1) {
+    produit = getProductReferenceByName(produitName);
+  } else {
+    produit = produitName;
+  }
+  // Format commune
+  commune = commune ? commune.toString().trim().toLowerCase().replace(/\b\w/g, l => l.toUpperCase()) : "";
+
+  // === ✅ Validate stop desk support
+  if (stop_desk === 1 && commune) {
+    const apiUrl = "https://salvadelivery.ecotrack.dz/api/v1/get/communes";
+    const options = {
+      method: "get",
+      headers: { "Authorization": `Bearer ${token}` },
+      muteHttpExceptions: true
+    };
+    let communes = [];
+    try {
+      const res = UrlFetchApp.fetch(apiUrl, options);
+      const json = JSON.parse(res.getContentText());
+      communes = Object.values(json);
+    } catch (e) {
+      Logger.log("Failed to fetch commune data: " + e);
+    }
+
+    if (communes.length > 0) {
+      const match = communes.find(c => c.nom.toLowerCase() === commune.toLowerCase());
+      if (match && match.has_stop_desk === 0) {
+        stop_desk = 0;
+      }
+    }
+  }
+
+  if (!adresse) adresse = commune;
+
+  const payload = {
+    "orders": {
+      "0": {
+        reference, nom_client, telephone, "telephone_2": "",
+        adresse, "code_postal": "", commune, code_wilaya,
+        montant, remarque, produit, stock, quantite,
+        "produit_a_recuperer": "", "boutique": "", "type": "1",
+        stop_desk, "weight": "0", fragile
+      }
+    }
+  };
+
+  sendToSALVA(payload, row, sheet);
+}
+
+
+function sendToSALVA(payload, row, sheet) {
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+  const apiUrl = "https://salvadelivery.ecotrack.dz/api/v1/create/orders";
+
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    headers: { "Authorization": `Bearer ${token}` },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+
+  try {
+    const res = UrlFetchApp.fetch(apiUrl, options);
+    const resText = res.getContentText();
+    const json = JSON.parse(resText);
+
+    // ✅ Extract tracking from the correct structure
+    let tracking;
+    if (json && json.results) {
+      const firstKey = Object.keys(json.results)[0];
+      tracking = json.results[firstKey]?.tracking;
+    }
+
+    if (tracking) {
+const statusUrl = `https://salvadelivery.ecotrack.dz/api/v1/get/orders/status?api_token=${token}&trackings=${tracking}&status=all`;
+      const statusRes = UrlFetchApp.fetch(statusUrl, {
+        method: "get",
+        muteHttpExceptions: true
+      });
+
+      const statusText = statusRes.getContentText();
+      sheet.getRange(row, 18).setValue(`${statusText}`);
+
+    } else {
+      sheet.getRange(row, 18).setValue(` SALVA: ❌ no tracking found. Resp: ${resText}`);
+    }
+
+  } catch (err) {
+    sheet.getRange(row, 18).setValue(`❌ SALVA ERROR: ${err}`);
+  }
+}
+
+function deleteOrder() {
+  // Hardcoded tracking number
+  const tracking = "ECTZE9250908118229"; // replace with your tracking number
+
+  // Your API token
+  const token = PropertiesService.getDocumentProperties().getProperty("API_TOKEN");
+
+  // Delete URL
+  const deleteUrl = `https://salvadelivery.ecotrack.dz/api/v1/delete/order?tracking=${tracking}`;
+
+  // Perform DELETE request
+  const response = UrlFetchApp.fetch(deleteUrl, {
+    method: "delete",
+    headers: { "Authorization": `Bearer ${token}` },
+    muteHttpExceptions: true
+  });
+
+  Logger.log(response.getResponseCode());
+  Logger.log(response.getContentText());
+}
+
+function normalizeText(text) {
+  if (!text) return "";
+  return text
+    .toString()
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " "); // normalize spaces
+}
+
+function tokenize(text) {
+  return normalizeText(text).split(" ").filter(Boolean);
+}
+
+function tokensMatch(inputTokens, sheetTokens) {
+  // Check if every token from input is somewhere in sheet
+  return inputTokens.every(tok => sheetTokens.includes(tok));
+}
+
+function getProductReferenceByName(productName) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("STATISTIQUE");
+
+  if (!sheet || !productName) return productName;
+
+  const lastRow = sheet.getLastRow();
+  const values = sheet.getRange(61, 1, lastRow - 60, 3).getValues(); 
+  // [[ref, name, variant], ...]
+
+  const inputTokens = tokenize(productName);
+
+  Logger.log("🔎 Looking for productName='" + productName + "' tokens=" + JSON.stringify(inputTokens));
+
+  for (let i = 0; i < values.length; i++) {
+    const ref = values[i][0];
+    const name = values[i][1];
+    const variant = values[i][2];
+
+    const sheetTokens = tokenize(name + " " + variant);
+
+    if (tokensMatch(inputTokens, sheetTokens)) {
+      Logger.log("✅ Match found: " + productName + " → ref=" + ref);
+      return ref;
+    }
+  }
+
+  Logger.log("❌ No match found for " + productName);
+  return productName; // fallback
+}
+
+
+
+/**
+ * Normalize wilaya input: handles "34-Bordj Bou Arréridj" or "Bordj Bou Arreridj"
+ * Always returns the corrected wilaya name only (not the number).
+ */
+function normalizeWilaya(input) {
+  if (!input) return input;
+  let parts = input.split("-");
+  let name = parts.length > 1 ? parts.slice(1).join("-").trim() : input.trim();
+  
+  // Use correction
+  let corrected = correctWilayaName(name);
+  if (corrected && corrected.wilaya_name_ascii) {
+    return corrected.wilaya_name_ascii;
+  }
+  return name;
+}
+
+/**
+ * ✅ هذه الدالة جديدة: تتعيط من Web App
+ * تستعمل نفس المنطق تاع onEdit
+ */
+function confirmOrderFromWeb(row) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("COMMANDES");
+  const val = sheet.getRange(row, 17).getValue().toString().trim().toUpperCase();
+
+  if (val === "CONFIRM") {
+    const email = Session.getActiveUser().getEmail().toLowerCase().trim();
+    if (!isEmailAuthorized(email)) return;
+
+    const props = PropertiesService.getDocumentProperties();
+    const provider = props.getProperty("DELIVERY_PROVIDER");
+
+    if (provider === "YALIDINE") handleYALIDINE(row, sheet);
+    else if (provider === "DHD") handleDHD(row, sheet);
+    else if (provider === "ANDERSON") handleANDERSON(row, sheet);
+    else if (provider === "NOEST") handleNOEST(row, sheet);
+    else if (provider === "AREEX") handleAREEX(row, sheet);
+    else if (provider === "OVRED") handleOVRED(row, sheet);
+    else if (provider === "WORLDEXPRESS") handleWORLDEXPRESS(row, sheet);
+    else if (provider === "48HR") handle48HR(row, sheet);
+    else if (provider === "ELOGISTIA") handleELOGISTIA(row, sheet);
+    else if (provider === "NAVEX") handleNAVEX(row, sheet);
+    else if (provider === "ZR") handleZR(row, sheet);
+    else if (provider === "ECOM") handleECOM(row, sheet);
+    else if (provider === "COLIRELI") handleCOLIRELI(row, sheet);
+    else if (provider === "GUEPEX") handleGUEPEX(row, sheet);
+    else if (provider === "SALVA") handleSALVA(row, sheet);
+  }
+}
+

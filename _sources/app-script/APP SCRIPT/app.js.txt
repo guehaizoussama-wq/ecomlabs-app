@@ -1,0 +1,79 @@
+function doGet() {
+  return HtmlService.createHtmlOutputFromFile("index");
+}
+
+// ✅ Mise à jour du statut (colonne Q)
+function updateStatus(row, newStatus) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("COMMANDES");
+  sheet.getRange("Q" + row).setValue(newStatus);
+  return "OK";
+}
+
+// ✅ Mise à jour des détails
+function updateDetails(row, commune, remarque, prix, quantite, livraison) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("COMMANDES");
+  sheet.getRange("G" + row).setValue(commune);    // Commune
+  sheet.getRange("P" + row).setValue(remarque);   // Remarque
+  sheet.getRange("N" + row).setValue(prix);       // Prix Total
+  sheet.getRange("K" + row).setValue(quantite);   // Quantité
+  sheet.getRange("M" + row).setValue(livraison);  // Prix Livraison
+  return "OK";
+}
+
+// ✅ Logs des appels (colonne X)
+function logCall(row) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("COMMANDES");
+  var now = new Date();
+  var logCol = 24; // colonne X
+  var current = sheet.getRange(row, logCol).getValue();
+  var log = current ? JSON.parse(current) : [];
+  log.push(now);
+  sheet.getRange(row, logCol).setValue(JSON.stringify(log));
+  return log;
+}
+
+// ✅ Récupération des données
+function getData() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("COMMANDES");
+  var lastRow = sheet.getLastRow();
+  var lastCol = sheet.getLastColumn();
+  if (lastRow < 2) return [];
+
+  var data = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
+  var result = [];
+
+  for (var i = 0; i < data.length; i++) {
+    var row = data[i];
+    var statut = row[16] ? row[16].toString().trim() : "";
+
+    var logs = [];
+    try { logs = row[23] ? JSON.parse(row[23]) : []; } catch(e) {}
+
+    var dateTxt = "";
+    if (row[0]) {
+      var d = new Date(row[0]);
+      if (!isNaN(d.getTime())) {
+        dateTxt = d.getFullYear() + "-" +
+          String(d.getMonth() + 1).padStart(2, '0') + "-" +
+          String(d.getDate()).padStart(2, '0');
+      }
+    }
+
+    result.push({
+      row: i + 2,
+      date: dateTxt,
+      nom: row[2] || "",
+      tel: row[3] ? row[3].toString() : "",
+      wilaya: row[5] || "",
+      commune: row[6] || "",
+      produit: row[8] || "",
+      quantite: row[10] || 1,
+      livraison: row[12] || 0, // Prix Livraison (M)
+      prix: row[13] || 0,      // Prix Total (N)
+      remarque: row[15] || "",
+      statut: statut,
+      logs: logs
+    });
+  }
+  return result;
+}
