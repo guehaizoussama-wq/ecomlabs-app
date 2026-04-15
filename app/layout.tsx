@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, Space_Grotesk } from "next/font/google";
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import "@/app/globals.css";
 
@@ -25,7 +26,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${fontSans.variable} ${fontMono.variable}`}>{children}</body>
+      <body className={`${fontSans.variable} ${fontMono.variable}`}>
+        {children}
+        <SpeedInsights />
+      </body>
     </html>
   );
 }
